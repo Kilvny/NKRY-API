@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
+using NKRY_API.Helpers;
+using NKRY_API.Models;
+using static NKRY_API.Utilities.Constants;
 
 namespace NKRY_API.Controllers
 {
@@ -24,14 +28,28 @@ namespace NKRY_API.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> Getusers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
           if (_uniftOfWork.User == null)
           {
               return NotFound();
           }
             var allUsers = _uniftOfWork.User.GetAll();
-            return Ok(allUsers);
+            var allUsersInOutputForm = new List<UserDto>();
+            foreach (var user in allUsers)
+            {
+                allUsersInOutputForm.Add(new UserDto
+                {
+                    Id = user.Id,
+                    Name = $"{user.FirstName} {user.LastName}",
+                    Email = user.Email,
+                    Role = user.Role == 0 ? "Admin" : "User",
+                    Address = user.Address,
+                    MemberForHowLongInDays = user.CreatedAt != null ? user.CreatedAt.CalculateCurrentAge() : 0,
+                }); ;
+            }
+
+            return Ok(allUsersInOutputForm);
         }
 
         // GET: api/Users/5
@@ -92,6 +110,11 @@ namespace NKRY_API.Controllers
           {
               return Problem("Entity set 'ApplicationContext.Users'  is null.");
           }
+          if (user.Id != 0)
+          {
+              return Problem("Do not include an 'Id' in the request; it will be auto-generated.", statusCode:422, title: "Unprocessable entity");
+          }
+            user.CreatedAt = DateTime.UtcNow;
             _uniftOfWork.User.Create(user);
             _uniftOfWork.Complete();
 

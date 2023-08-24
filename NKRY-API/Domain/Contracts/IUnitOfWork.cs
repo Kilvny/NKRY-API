@@ -11,5 +11,20 @@
         IUserRepository User { get; }
         // add more 
         int Complete();
+
+
+        // Public implementation of Dispose pattern callable by consumers.
+        public void Dispose()
+        {
+
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+
+        }
+
+        
     }
 }

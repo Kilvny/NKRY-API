@@ -9,7 +9,10 @@ throw new InvalidOperationException("Connections string: NKRY-APIContext was not
 
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(setupAction =>
+{
+    setupAction.ReturnHttpNotAcceptable = true; // disallow unsupported contentTypes
+}).AddXmlDataContractSerializerFormatters();
 // Add this service to the container to get run on runtime
 builder.Services.ConfigureUnitOfWork();
 

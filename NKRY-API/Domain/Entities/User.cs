@@ -8,17 +8,22 @@ namespace NKRY_API.Domain.Entities
     {
 
         public int Id { get; set; }
+        [MaxLength(50)]
         public string? FirstName { get; set; }
+        [MaxLength(50)]
         public string? LastName { get; set; }
         [Required(ErrorMessage ="User Email is required")]
+        [MaxLength(100)]
         public string? Email { get; set; }
         [Required(ErrorMessage = "User Password is required")]
+        [MaxLength(100)]
         public string? Password { get; set; }
         [EnumDataType(typeof(UserRole),ErrorMessage ="User Role Must be: user or admin")]
         [Required]
         public UserRole Role { get; set; }
+        [MaxLength(200)]
         public string? Address { get; set; }
         [DataType(DataType.DateTime)]
-        public DateTime CreatedAt = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
     }
 }
