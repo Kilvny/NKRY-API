@@ -9,6 +9,6 @@ namespace NKRY_API.Models
         public string? Email { get; set; }
         public string? Role { get; set; }
         public string? Address { get; set; }
-        public int MemberForHowLongInDays { get; set; }
+        public int MemberForHowLongInYears { get; set; }
     }
 }

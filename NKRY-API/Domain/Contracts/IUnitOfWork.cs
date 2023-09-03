@@ -10,7 +10,7 @@
     {
         IUserRepository User { get; }
         // add more 
-        int Complete();
+        Task<int> Complete();
 
 
         // Public implementation of Dispose pattern callable by consumers.

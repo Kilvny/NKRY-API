@@ -9,5 +9,10 @@ namespace NKRY_API.Services
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
+
+        public static void ConfigureAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        }
     }
 }

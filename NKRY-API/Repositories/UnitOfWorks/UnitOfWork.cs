@@ -6,6 +6,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationContext _context;
+        private readonly ILogger<UnitOfWork> _logger;
         private IUserRepository _user;
         public IUserRepository User
         {
@@ -18,14 +19,17 @@ namespace NKRY_API.Repositories.UnitOfWorks
                 return _user;
             }
         }
-        public UnitOfWork(ApplicationContext context)
+        public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger)
         {
             _context = context;
-
+            _logger = logger;
         }
-        public int Complete()
+        public async Task<int> Complete()
         {
-            return _context.SaveChanges();
+            var saveResult = await _context.SaveChangesAsync();
+            _logger.LogInformation($"Saved {saveResult} to the database successfully!") ;
+            return saveResult;
+            
         }
         // Flag: Has Dispose already been called?
         bool disposed = false;

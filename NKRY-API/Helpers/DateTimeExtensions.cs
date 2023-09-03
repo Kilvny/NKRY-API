@@ -5,7 +5,11 @@
         public static int CalculateCurrentAge(this DateTime dateTime)
         {
             var currentDate = DateTime.UtcNow;
-            int age = currentDate.Day - dateTime.Day;
+            int age = currentDate.Year - dateTime.Year;
+            if(currentDate < dateTime.AddYears(age))
+            {
+                age--;
+            }
             return age;
         }
     }

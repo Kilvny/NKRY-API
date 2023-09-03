@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,41 +21,34 @@ namespace NKRY_API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUnitOfWork _uniftOfWork;
+        private readonly IMapper _mapper;
 
-        public UsersController(IUnitOfWork unitOfWork)
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _uniftOfWork = unitOfWork;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: api/Users
+        [HttpHead]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
+            throw new Exception();
           if (_uniftOfWork.User == null)
           {
               return NotFound();
           }
             var allUsers = _uniftOfWork.User.GetAll();
-            var allUsersInOutputForm = new List<UserDto>();
-            foreach (var user in allUsers)
-            {
-                allUsersInOutputForm.Add(new UserDto
-                {
-                    Id = user.Id,
-                    Name = $"{user.FirstName} {user.LastName}",
-                    Email = user.Email,
-                    Role = user.Role == 0 ? "Admin" : "User",
-                    Address = user.Address,
-                    MemberForHowLongInDays = user.CreatedAt != null ? user.CreatedAt.CalculateCurrentAge() : 0,
-                }); ;
-            }
 
-            return Ok(allUsersInOutputForm);
+            OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allUsers
+                ));
+            return mappedResponse;
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
           if (_uniftOfWork.User == null)
           {
@@ -66,8 +60,8 @@ namespace NKRY_API.Controllers
             {
                 return NotFound();
             }
-
-            return user;
+            OkObjectResult mappedResponse = Ok(_mapper.Map<UserDto>(user));
+            return mappedResponse;
         }
 
         // PUT: api/Users/5
@@ -84,7 +78,7 @@ namespace NKRY_API.Controllers
 
             try
             {
-                _uniftOfWork.Complete();
+                await _uniftOfWork.Complete();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -116,7 +110,8 @@ namespace NKRY_API.Controllers
           }
             user.CreatedAt = DateTime.UtcNow;
             _uniftOfWork.User.Create(user);
-            _uniftOfWork.Complete();
+            await _uniftOfWork.Complete();
+            
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
@@ -136,7 +131,7 @@ namespace NKRY_API.Controllers
             }
 
             _uniftOfWork.User.Delete(user);
-            _uniftOfWork.Complete();
+            await _uniftOfWork.Complete();
 
             return NoContent();
         }

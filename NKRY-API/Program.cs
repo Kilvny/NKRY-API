@@ -16,12 +16,21 @@ builder.Services.AddControllers(setupAction =>
 // Add this service to the container to get run on runtime
 builder.Services.ConfigureUnitOfWork();
 
+builder.Services.ConfigureAutoMapper();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler(appBuilder =>
+    {
+        appBuilder.Run(async context =>
+        {
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync("A Fault occurred in the server. Please Try again later");
+        });
+    });
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
