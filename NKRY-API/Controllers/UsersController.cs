@@ -34,7 +34,6 @@ namespace NKRY_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            throw new Exception();
           if (_uniftOfWork.User == null)
           {
               return NotFound();
