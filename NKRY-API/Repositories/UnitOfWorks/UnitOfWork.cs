@@ -8,6 +8,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
         private readonly ApplicationContext _context;
         private readonly ILogger<UnitOfWork> _logger;
         private IUserRepository _user;
+        private IDepartmentRepository _department;
         public IUserRepository User
         {
             get
@@ -19,6 +20,18 @@ namespace NKRY_API.Repositories.UnitOfWorks
                 return _user;
             }
         }
+        private IDepartmentRepository Department
+        {
+            get
+            {
+                if (_department == null)
+                {
+                    _department = new DepartmentRepository(_context);
+                }
+                return _department;
+            }
+        }
+
         public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger)
         {
             _context = context;

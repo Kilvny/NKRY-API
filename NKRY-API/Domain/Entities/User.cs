@@ -25,5 +25,7 @@ namespace NKRY_API.Domain.Entities
         public string? Address { get; set; }
         [DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; }
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; }
     }
 }

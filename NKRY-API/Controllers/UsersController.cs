@@ -20,13 +20,15 @@ namespace NKRY_API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUnitOfWork _uniftOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserRepository _user;
 
         public UsersController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _uniftOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _user = _unitOfWork.User;
         }
 
         // GET: api/Users
@@ -34,11 +36,11 @@ namespace NKRY_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-          if (_uniftOfWork.User == null)
+          if (_user == null)
           {
               return NotFound();
           }
-            var allUsers = _uniftOfWork.User.GetAll();
+            var allUsers = _user.GetAll();
 
             OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allUsers
                 ));
@@ -49,11 +51,11 @@ namespace NKRY_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
-          if (_uniftOfWork.User == null)
+          if (_user == null)
           {
               return NotFound();
           }
-            var user = _uniftOfWork.User.GetById(id);
+            var user = _user.GetById(id);
 
             if (user == null)
             {
@@ -73,11 +75,11 @@ namespace NKRY_API.Controllers
                 return BadRequest();
             }
 
-            _uniftOfWork.User.Update(user);
+            _user.Update(user);
 
             try
             {
-                await _uniftOfWork.Complete();
+                await _unitOfWork.Complete();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -99,7 +101,7 @@ namespace NKRY_API.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_uniftOfWork.User == null)
+          if (_user == null)
           {
               return Problem("Entity set 'ApplicationContext.Users'  is null.");
           }
@@ -108,8 +110,8 @@ namespace NKRY_API.Controllers
               return Problem("Do not include an 'Id' in the request; it will be auto-generated.", statusCode:422, title: "Unprocessable entity");
           }
             user.CreatedAt = DateTime.UtcNow;
-            _uniftOfWork.User.Create(user);
-            await _uniftOfWork.Complete();
+            _user.Create(user);
+            await _unitOfWork.Complete();
             
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
@@ -119,25 +121,25 @@ namespace NKRY_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (_uniftOfWork.User == null)
+            if (_user == null)
             {
                 return NotFound();
             }
-            var user = _uniftOfWork.User.GetById(id);
+            var user = _user.GetById(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            _uniftOfWork.User.Delete(user);
-            await _uniftOfWork.Complete();
+            _user.Delete(user);
+            await _unitOfWork.Complete();
 
             return NoContent();
         }
 
         private bool UserExists(int id)
         {
-            return (_uniftOfWork.User.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_user.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
