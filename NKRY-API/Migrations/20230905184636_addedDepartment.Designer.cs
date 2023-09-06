@@ -12,8 +12,8 @@ using NKRY_API.DataAccess.EFCore;
 namespace NKRY_API.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230904055703_addDepartment")]
-    partial class addDepartment
+    [Migration("20230905184636_addedDepartment")]
+    partial class addedDepartment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,7 +39,7 @@ namespace NKRY_API.Migrations
 
                     b.HasKey("DepartmentId");
 
-                    b.ToTable("Department");
+                    b.ToTable("departments");
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.User", b =>

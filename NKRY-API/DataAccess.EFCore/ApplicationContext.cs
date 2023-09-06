@@ -10,5 +10,6 @@ namespace NKRY_API.DataAccess.EFCore
         }
 
         public DbSet<User> users { get; set; }
+        public DbSet<Department> departments { get; set; }
     }
 }

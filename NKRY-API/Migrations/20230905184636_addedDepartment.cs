@@ -5,7 +5,7 @@
 namespace NKRY_API.Migrations
 {
     /// <inheritdoc />
-    public partial class addDepartment : Migration
+    public partial class addedDepartment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace NKRY_API.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
-                name: "Department",
+                name: "departments",
                 columns: table => new
                 {
                     DepartmentId = table.Column<int>(type: "int", nullable: false)
@@ -26,7 +26,7 @@ namespace NKRY_API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Department", x => x.DepartmentId);
+                    table.PrimaryKey("PK_departments", x => x.DepartmentId);
                 });
 
             migrationBuilder.CreateIndex(
@@ -35,10 +35,10 @@ namespace NKRY_API.Migrations
                 column: "DepartmentId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_users_Department_DepartmentId",
+                name: "FK_users_departments_DepartmentId",
                 table: "users",
                 column: "DepartmentId",
-                principalTable: "Department",
+                principalTable: "departments",
                 principalColumn: "DepartmentId");
         }
 
@@ -46,11 +46,11 @@ namespace NKRY_API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_users_Department_DepartmentId",
+                name: "FK_users_departments_DepartmentId",
                 table: "users");
 
             migrationBuilder.DropTable(
-                name: "Department");
+                name: "departments");
 
             migrationBuilder.DropIndex(
                 name: "IX_users_DepartmentId",

@@ -36,7 +36,7 @@ namespace NKRY_API.Migrations
 
                     b.HasKey("DepartmentId");
 
-                    b.ToTable("Department");
+                    b.ToTable("departments");
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.User", b =>

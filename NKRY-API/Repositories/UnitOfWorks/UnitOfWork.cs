@@ -9,6 +9,11 @@ namespace NKRY_API.Repositories.UnitOfWorks
         private readonly ILogger<UnitOfWork> _logger;
         private IUserRepository _user;
         private IDepartmentRepository _department;
+        public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
         public IUserRepository User
         {
             get
@@ -32,11 +37,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
             }
         }
 
-        public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger)
-        {
-            _context = context;
-            _logger = logger;
-        }
+
         public async Task<int> Complete()
         {
             var saveResult = await _context.SaveChangesAsync();
