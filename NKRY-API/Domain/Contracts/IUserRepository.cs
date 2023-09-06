@@ -6,7 +6,7 @@ namespace NKRY_API.Domain.Contracts
 {
     public interface IUserRepository : IGenericRepository<User>
     {
-        IEnumerable<User> GetAll(string userDepartment);
+        IEnumerable<User> GetAll(string userDepartment, string searchQuery);
         void UpdateUserPassword(User user);
         public UserRole GetUserRole(int id);
     }

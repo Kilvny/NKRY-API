@@ -22,24 +22,34 @@ namespace NKRY_API.Repositories
             User user = _applicationContext.users.Find(id);
             return user.Role;
         }
-        public IEnumerable<User> GetAll(string userDepartment)
+        public IEnumerable<User> GetAll(string userDepartment, string searchQuery)
         {
-            IEnumerable<User> users = _applicationContext.Set<User>().ToList();
-            
-            if (string.IsNullOrWhiteSpace(userDepartment))
+            bool isUserDepartmentNull = string.IsNullOrWhiteSpace(userDepartment);
+            bool isSearchQueryNull = string.IsNullOrWhiteSpace(searchQuery);
+
+            if (isUserDepartmentNull && isSearchQueryNull)
             {
-                return users;
+                IEnumerable<User> allUsers = _applicationContext.Set<User>().ToList();
+                return allUsers;
             }
 
-            userDepartment = userDepartment.Trim();
-            IEnumerable<User> filteredUsers = _applicationContext.users.Where(u => u.Department.DepartmentName == userDepartment).ToList();
-            return filteredUsers;
-            /*
-             * Test this by setting user departments manually first
-             * Implement Searching
-             * **/
+            var users = _applicationContext.users as IQueryable<User>;
+            if (!isUserDepartmentNull)
+            {
+                userDepartment = userDepartment.Trim();
+                var filteredUsers = users.Where(u => u.Department.DepartmentName == userDepartment);
+                users = filteredUsers;
+            }
 
+            if (!isSearchQueryNull)
+            {
+                searchQuery = searchQuery.Trim();
+                var searchResult = users.Where(u => u.Address.Contains(searchQuery)
+                || u.Email.Contains(searchQuery));
+                users = searchResult;
+            }
 
+            return users.ToList();
 
         }
 
