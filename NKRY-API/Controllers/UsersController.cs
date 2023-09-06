@@ -34,13 +34,14 @@ namespace NKRY_API.Controllers
         // GET: api/Users
         [HttpHead]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers(
+            [FromQuery(Name ="department")] string? userDepartment)
         {
           if (_user == null)
           {
               return NotFound();
           }
-            var allUsers = _user.GetAll();
+            var allUsers = _user.GetAll(userDepartment);
 
             OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allUsers
                 ));

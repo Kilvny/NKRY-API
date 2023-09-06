@@ -22,5 +22,26 @@ namespace NKRY_API.Repositories
             User user = _applicationContext.users.Find(id);
             return user.Role;
         }
+        public IEnumerable<User> GetAll(string userDepartment)
+        {
+            IEnumerable<User> users = _applicationContext.Set<User>().ToList();
+            
+            if (string.IsNullOrWhiteSpace(userDepartment))
+            {
+                return users;
+            }
+
+            userDepartment = userDepartment.Trim();
+            IEnumerable<User> filteredUsers = _applicationContext.users.Where(u => u.Department.DepartmentName == userDepartment).ToList();
+            return filteredUsers;
+            /*
+             * Test this by setting user departments manually first
+             * Implement Searching
+             * **/
+
+
+
+        }
+
     }
 }
