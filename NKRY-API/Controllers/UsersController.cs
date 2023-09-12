@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
-using NKRY_API.Helpers;
 using NKRY_API.Models;
-using static NKRY_API.Utilities.Constants;
 
 namespace NKRY_API.Controllers
 {
