@@ -5,6 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
 using NKRY_API.Models;
+using static NKRY_API.Utilities.Constants;
+using static NKRY_API.Utilities.Cryptography;
+
+
 
 namespace NKRY_API.Controllers
 {
@@ -39,6 +43,7 @@ namespace NKRY_API.Controllers
                 ));
             return mappedResponse;
         }
+
 
         // GET: api/Users/5
         [HttpGet("{id}")]
@@ -92,22 +97,22 @@ namespace NKRY_API.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(CreateUserDto userDto)
         {
-          if (_user == null)
-          {
-              return Problem("Entity set 'ApplicationContext.Users'  is null.");
-          }
+          var user = _mapper.Map<User>(userDto);
+            // this if condition is not necessary anymore as DTO doesn't have an Id field
           if (user.Id != 0)
           {
               return Problem("Do not include an 'Id' in the request; it will be auto-generated.", statusCode:422, title: "Unprocessable entity");
           }
             user.CreatedAt = DateTime.UtcNow;
+            user.Role = UserRole.user; // default is user
             _user.Create(user);
             await _unitOfWork.Complete();
-            
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            var userToReturn = _mapper.Map<UserDto>(user);
+
+            return CreatedAtAction("GetUser", new { id = userToReturn.Id }, userToReturn);
         }
 
         // DELETE: api/Users/5

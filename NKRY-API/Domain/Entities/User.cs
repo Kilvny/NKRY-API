@@ -16,7 +16,6 @@ namespace NKRY_API.Domain.Entities
         [MaxLength(100)]
         public string? Email { get; set; }
         [Required(ErrorMessage = "User Password is required")]
-        [MaxLength(100)]
         public string? Password { get; set; }
         [EnumDataType(typeof(UserRole),ErrorMessage ="User Role Must be: user or admin")]
         [Required]

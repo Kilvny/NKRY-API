@@ -32,7 +32,7 @@ namespace NKRY_API.Repositories
                 IEnumerable<User> allUsers = _applicationContext.Set<User>().ToList();
                 return allUsers;
             }
-
+            // it's good practice to use differed execution so we cast users object as IQueryable<User> type 
             var users = _applicationContext.users as IQueryable<User>;
             if (!isUserDepartmentNull)
             {
@@ -48,7 +48,7 @@ namespace NKRY_API.Repositories
                 || u.Email.Contains(searchQuery));
                 users = searchResult;
             }
-
+            // now we execute after the filtration done on the query first
             return users.ToList();
 
         }
