@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
 using NKRY_API.Models;
+using NKRY_API.ResourceParameters;
 using static NKRY_API.Utilities.Constants;
 using static NKRY_API.Utilities.Cryptography;
 
@@ -30,14 +31,13 @@ namespace NKRY_API.Controllers
         // GET: api/Users
         [HttpHead]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers(
-            [FromQuery(Name ="department")] string? userDepartment,[FromQuery(Name ="search")] string searchQuery)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers([FromQuery] UsersResourceParameters usersResourceParameters)
         {
           if (_user == null)
           {
               return NotFound();
           }
-            var allUsers = _user.GetAll(userDepartment, searchQuery);
+            var allUsers = _user.GetAll(usersResourceParameters);
 
             OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allUsers
                 ));

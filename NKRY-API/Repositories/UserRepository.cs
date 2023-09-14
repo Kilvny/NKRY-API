@@ -1,16 +1,19 @@
 ﻿using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
+using NKRY_API.ResourceParameters;
 using static NKRY_API.Utilities.Constants;
 
 namespace NKRY_API.Repositories
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        public UserRepository(ApplicationContext applicationContext) 
+        private readonly ILogger _logger;
+
+        public UserRepository(ApplicationContext applicationContext, ILogger logger) 
             : base(applicationContext)
         {
-
+            _logger = logger;
         }
 
         public void UpdateUserPassword(User user)
@@ -22,15 +25,21 @@ namespace NKRY_API.Repositories
             User user = _applicationContext.users.Find(id);
             return user.Role;
         }
-        public IEnumerable<User> GetAll(string userDepartment, string searchQuery)
+        public IEnumerable<User> GetAll(UsersResourceParameters usersResourceParameters)
         {
+            if (usersResourceParameters == null)
+            {
+                throw new ArgumentNullException(nameof(usersResourceParameters));
+            }
+            string userDepartment = usersResourceParameters.UserDepartment;
+            string searchQuery = usersResourceParameters.SearchQuery;
+
             bool isUserDepartmentNull = string.IsNullOrWhiteSpace(userDepartment);
             bool isSearchQueryNull = string.IsNullOrWhiteSpace(searchQuery);
 
             if (isUserDepartmentNull && isSearchQueryNull)
             {
-                IEnumerable<User> allUsers = _applicationContext.Set<User>().ToList();
-                return allUsers;
+                return GetAll();
             }
             // it's good practice to use differed execution so we cast users object as IQueryable<User> type 
             var users = _applicationContext.users as IQueryable<User>;

@@ -2,6 +2,6 @@
 {
     public abstract class ResourceParameters
     {
-        public string SearchQuery { get; set; }
+        public string? SearchQuery { get; set; }
     }
 }

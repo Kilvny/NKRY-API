@@ -20,7 +20,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
             {
                 if (_user == null)
                 {
-                    _user = new UserRepository(_context);
+                    _user = new UserRepository(_context, _logger);
                 }
                 return _user;
             }

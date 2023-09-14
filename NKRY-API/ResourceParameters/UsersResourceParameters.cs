@@ -2,6 +2,6 @@
 {
     public class UsersResourceParameters : ResourceParameters
     {
-        public string userDepartment { get; set; }
+        public string? UserDepartment { get; set; }
     }
 }
