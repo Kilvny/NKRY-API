@@ -10,7 +10,6 @@ namespace NKRY_API.Domain.Contracts
     public interface IUserRepository : IGenericRepository<User>
     {
         public IEnumerable<User> GetAll(UsersResourceParameters usersResourceParameters);
-        public IEnumerable<User> GetAllNow();
 
         public void UpdateUserPassword(User user);
         public Task<UserManagerResponse> CreateUserAsync(User user);

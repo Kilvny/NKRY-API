@@ -37,11 +37,10 @@ namespace NKRY_API.Controllers
           {
               return NotFound();
           }
-            //var allUsers = _user.GetAll(usersResourceParameters);
-            var allusers = _user.GetAllNow();
 
+            var allUsers = _user.GetAll(usersResourceParameters);
 
-            OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allusers
+            OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allUsers
                 ));
             return mappedResponse;
         }

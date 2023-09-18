@@ -27,7 +27,7 @@ namespace NKRY_API.Repositories
 
         }
 
-        public new IEnumerable<User> GetAllNow()
+        public new IEnumerable<User> GetAll()
         {
             var users =  _userManager.Users.ToList();
             
@@ -49,7 +49,7 @@ namespace NKRY_API.Repositories
 
             if (isUserDepartmentNull && isSearchQueryNull)
             {
-                return GetAll();
+                return this.GetAll();
             }
             // it's good practice to use differed execution so we cast users object as IQueryable<User> type 
             var users = _applicationContext.users as IQueryable<User>;
