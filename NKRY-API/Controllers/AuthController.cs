@@ -52,8 +52,13 @@ namespace NKRY_API.Controllers
             var userToReturn = _mapper.Map<UserDto>(user);
             string uri = GenerateUri(userToReturn.Id);
 
-            //return CreatedAtAction(nameof(UsersController.GetUser), new { id = userToReturn.Id }, userToReturn);
-            return Created(uri, userToReturn);
+            var createdResource = userToReturn;
+            var actionName = nameof(UsersController.GetUser);
+            var controllerName = "Users";
+            var routeValues = new { id = createdResource.Id };
+
+            return CreatedAtAction(actionName, controllerName, routeValues, createdResource);
+            //return Created(uri, userToReturn);
 
 
         }
