@@ -21,7 +21,10 @@ namespace NKRY_API.Profiles
             dest => dest.Role,
                 opt => opt.MapFrom(src => src.Role == 0 ? "Admin" : "User"));
 
-            CreateMap<CreateUserDto, User>();
+            CreateMap<CreateUserDto, User>()
+                .ForMember(
+                dest => dest.UserName,
+                opt => opt.MapFrom(src => src.Email));
         }
     }
 }

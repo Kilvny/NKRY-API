@@ -37,9 +37,11 @@ namespace NKRY_API.Controllers
           {
               return NotFound();
           }
-            var allUsers = _user.GetAll(usersResourceParameters);
+            //var allUsers = _user.GetAll(usersResourceParameters);
+            var allusers = _user.GetAllNow();
 
-            OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allUsers
+
+            OkObjectResult mappedResponse = Ok(_mapper.Map<IEnumerable<UserDto>>(allusers
                 ));
             return mappedResponse;
         }
@@ -47,7 +49,8 @@ namespace NKRY_API.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUser(int id)
+        [ActionName("GetUser")]
+        public async Task<ActionResult<UserDto>> GetUser(string id)
         {
           if (_user == null)
           {
@@ -66,7 +69,7 @@ namespace NKRY_API.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(string id, User user)
         {
             if (id != user.Id)
             {
@@ -100,24 +103,25 @@ namespace NKRY_API.Controllers
         public async Task<ActionResult<User>> PostUser(CreateUserDto userDto)
         {
           var user = _mapper.Map<User>(userDto);
-            // this if condition is not necessary anymore as DTO doesn't have an Id field
-          if (user.Id != 0)
-          {
-              return Problem("Do not include an 'Id' in the request; it will be auto-generated.", statusCode:422, title: "Unprocessable entity");
-          }
-            user.CreatedAt = DateTime.UtcNow;
-            user.Role = UserRole.user; // default is user
-            _user.Create(user);
-            await _unitOfWork.Complete();
+          user.Role = UserRole.user; // default is user
+          user.CreatedAt = DateTime.UtcNow;
 
-            var userToReturn = _mapper.Map<UserDto>(user);
+          var result = await _user.CreateUserAsync(user);
+          await _unitOfWork.Complete();
 
-            return CreatedAtAction("GetUser", new { id = userToReturn.Id }, userToReturn);
+          var userToReturn = _mapper.Map<UserDto>(user);
+
+          if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
+          return CreatedAtAction("GetUser", new { id = userToReturn.Id }, userToReturn);
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             if (_user == null)
             {
@@ -135,7 +139,7 @@ namespace NKRY_API.Controllers
             return NoContent();
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(string id)
         {
             return (_user.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
         }

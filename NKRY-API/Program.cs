@@ -1,14 +1,19 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NKRY_API.DataAccess.EFCore;
+using NKRY_API.Domain.Entities;
 using NKRY_API.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<ApplicationContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("NKRY-APIContext") ??
 throw new InvalidOperationException("Connections string: NKRY-APIContext was not found")));
+
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationContext>().AddDefaultTokenProviders();
 
 // set up Jwt auth services
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -74,5 +79,11 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 }
 );
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers().RequireAuthorization();
+//    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+//});
 
 app.Run();
