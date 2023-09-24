@@ -63,6 +63,26 @@ namespace NKRY_API.Controllers
 
         }
 
+        [HttpPost("Login")]
+        public async Task<IActionResult> LoginUser(LoginDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _user.LoginUserAsync(model);
+            
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result.Message);
+
+
+        }
+
         [NonAction]
         private string GenerateUri(string id)
         {

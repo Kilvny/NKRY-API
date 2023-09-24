@@ -1,5 +1,6 @@
 ﻿
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NKRY_API.Domain.Contracts;
@@ -26,6 +27,15 @@ namespace NKRY_API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _user = _unitOfWork.User;
+        }
+
+
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        [Route("api/Tokens")]
+        public IActionResult TestAuthorization()
+        {
+            return Ok("You're Authorized");
         }
 
         // GET: api/Users

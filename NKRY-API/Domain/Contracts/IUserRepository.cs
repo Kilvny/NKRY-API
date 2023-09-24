@@ -13,5 +13,6 @@ namespace NKRY_API.Domain.Contracts
 
         public void UpdateUserPassword(User user);
         public Task<UserManagerResponse> CreateUserAsync(User user);
+        public Task<UserManagerResponse> LoginUserAsync(LoginDto model);
     }
 }

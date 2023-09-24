@@ -10,13 +10,15 @@ namespace NKRY_API.Repositories.UnitOfWorks
         private readonly ApplicationContext _context;
         private readonly ILogger<UnitOfWork> _logger;
         private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration;
         private IUserRepository _user;
         private IDepartmentRepository _department;
-        public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger, UserManager<User> userManager)
+        public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger, UserManager<User> userManager, IConfiguration configuration)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
+            _configuration = configuration;
         }
         public IUserRepository User
         {
@@ -24,7 +26,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
             {
                 if (_user == null)
                 {
-                    _user = new UserRepository(_context, _logger, _userManager);
+                    _user = new UserRepository(_context, _logger, _userManager, _configuration);
                 }
                 return _user;
             }
