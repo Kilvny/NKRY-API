@@ -20,7 +20,7 @@ namespace NKRY_API.Domain.Entities
         public string? Password { get; set; }
 
         [EnumDataType(typeof(UserRole),ErrorMessage ="User Role Must be: user or admin")]
-        public UserRole? Role { get; set; }
+        public string? Role { get; set; }
         [MaxLength(200)]
         public string? Address { get; set; }
         [DataType(DataType.DateTime)]

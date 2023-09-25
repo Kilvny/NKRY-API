@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NKRY_API.Domain.Contracts;
@@ -27,6 +28,7 @@ namespace NKRY_API.Controllers
 
         // POST: api/auth/register
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<ActionResult<User>> PostUser(CreateUserDto userDto)
         {
@@ -36,7 +38,7 @@ namespace NKRY_API.Controllers
             }
 
             var user = _mapper.Map<User>(userDto);
-            user.Role = UserRole.user; // default is user
+            user.Role = "User"; // default is user
             user.CreatedAt = DateTime.UtcNow;
 
 
@@ -63,6 +65,7 @@ namespace NKRY_API.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> LoginUser(LoginDto model)
         {

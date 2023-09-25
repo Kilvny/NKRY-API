@@ -7,6 +7,7 @@ using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
 using NKRY_API.Models;
 using NKRY_API.ResourceParameters;
+using System.Security.Claims;
 using static NKRY_API.Utilities.Constants;
 using static NKRY_API.Utilities.Cryptography;
 
@@ -15,6 +16,7 @@ using static NKRY_API.Utilities.Cryptography;
 namespace NKRY_API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -30,12 +32,13 @@ namespace NKRY_API.Controllers
         }
 
 
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         [HttpGet]
         [Route("api/Tokens")]
-        public IActionResult TestAuthorization()
+        public IActionResult TestEndPointForUserOnly()
         {
-            return Ok("You're Authorized");
+            var currentUserRole = User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Role)?.Value;
+            return Ok($"You're Authorized as {currentUserRole}");
         }
 
         // GET: api/Users
@@ -106,30 +109,10 @@ namespace NKRY_API.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(CreateUserDto userDto)
-        {
-          var user = _mapper.Map<User>(userDto);
-          user.Role = UserRole.user; // default is user
-          user.CreatedAt = DateTime.UtcNow;
-
-          var result = await _user.CreateUserAsync(user);
-          await _unitOfWork.Complete();
-
-          var userToReturn = _mapper.Map<UserDto>(user);
-
-          if (!result.IsSuccess)
-            {
-                return BadRequest(result);
-            }
-
-          return CreatedAtAction("GetUser", new { id = userToReturn.Id }, userToReturn);
-        }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             if (_user == null)

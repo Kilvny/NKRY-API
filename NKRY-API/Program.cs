@@ -43,6 +43,8 @@ builder.Services.ConfigureUnitOfWork();
 
 builder.Services.ConfigureAutoMapper();
 
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -69,9 +71,14 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseSwagger();
+
+// This middleware serves the Swagger documentation UI
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "NKRY API V1");
+    c.RoutePrefix = string.Empty; // swagger UI now is accessible in the root path of the app
+});
 
 // set up our api to use attribute based routing
 app.UseEndpoints(endpoints =>
