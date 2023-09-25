@@ -1,11 +1,36 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NKRY_API.DataAccess.EFCore;
+using NKRY_API.Domain.Entities;
 using NKRY_API.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<ApplicationContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("NKRY-APIContext") ??
 throw new InvalidOperationException("Connections string: NKRY-APIContext was not found")));
+
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationContext>().AddDefaultTokenProviders();
+
+// set up Jwt auth services
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+
+    });
 
 
 // Add services to the container.
@@ -17,6 +42,8 @@ builder.Services.AddControllers(setupAction =>
 builder.Services.ConfigureUnitOfWork();
 
 builder.Services.ConfigureAutoMapper();
+
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -40,11 +67,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseSwagger();
+
+// This middleware serves the Swagger documentation UI
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "NKRY API V1");
+    c.RoutePrefix = string.Empty; // swagger UI now is accessible in the root path of the app
+});
 
 // set up our api to use attribute based routing
 app.UseEndpoints(endpoints =>
@@ -52,5 +86,11 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 }
 );
+
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers().RequireAuthorization();
+//    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+//});
 
 app.Run();
