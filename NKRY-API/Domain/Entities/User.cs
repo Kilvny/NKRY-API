@@ -27,5 +27,7 @@ namespace NKRY_API.Domain.Entities
         public DateTime CreatedAt { get; set; }
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
+        public ICollection<AdminExpense>? AdminExpenses { get; set; }
+
     }
 }
