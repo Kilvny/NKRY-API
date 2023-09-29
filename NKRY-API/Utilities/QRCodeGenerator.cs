@@ -10,7 +10,7 @@ namespace NKRY_API.Utilities
     {
         public async static Task<string> GenerateAsync(string data, int dimensions = 150) 
         {
-            string qrURL = await QRApiService.GetQRUrl(data, dimensions);
+            string qrURL = await QRApiService.GetQRUrl(data, dimensions); // var result = QRCodeGenerator.GenerateAsync(json).GetAwaiter().GetResult();
             return qrURL;
         }
     }
@@ -46,8 +46,8 @@ namespace NKRY_API.Utilities
                 throw new HttpRequestException(response.ReasonPhrase);
             }
 
-            return result;
-            // return QrUrl;
+            // return result;
+            return QrUrl;
         } 
     }
 }

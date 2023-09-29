@@ -9,6 +9,14 @@
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository User { get; }
+        IAdminExpenseRepository AdminExpense { get; }
+        ICarRepository Car { get; }
+        IEmployeeFinanceRepository EmployeeFinance { get; }
+        IEmployeeRepository Employee { get; }
+        IExpenseRepository Expense {get;}
+        IInvoiceRepository Invoice { get; }
+        IOrderRepository Order { get; }
+
         // add more 
         Task<int> Complete();
 

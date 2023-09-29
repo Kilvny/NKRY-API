@@ -16,6 +16,8 @@ namespace NKRY_API.Domain.Entities
         [Required]
         public int BaseSalary { get; set; }
         public int? TotalSalary { get; set; }
+        public DateOnly? DueMonth { get; set; }
+        public Guid EmployeeId { get; set; }
         public ICollection<Expense>? EmployeeExpenses { get; set; }
         
     }

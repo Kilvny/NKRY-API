@@ -19,7 +19,7 @@ namespace NKRY_API.Domain.Entities
         [Required]
         public DateOnly DueDate { get; set; }
         [Required]
-        public decimal PriceWithVat { get; set; }
+        public decimal PriceWithVAT { get; set; }
         [Required]
         public string? BillTo { get; set; }
         public int VATRate = 15;

@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace NKRY_API.Domain.Entities
 {
-    public class AdminExpense
+    public class AdminExpense : Expense
     {
-        public Guid Id { get; set; }
-        public Guid? ExpenseId { get; set; }
-        public Expense? Expense { get; set; }
-        public Guid? AdminId { get; set; }
+        public Guid AdminId { get; set; }
         public User? Admin { get; set; }
     }
 

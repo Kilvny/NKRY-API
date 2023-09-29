@@ -13,6 +13,14 @@ namespace NKRY_API.Repositories.UnitOfWorks
         private readonly IConfiguration _configuration;
         private IUserRepository _user;
         private IDepartmentRepository _department;
+        private IAdminExpenseRepository _adminExpense;
+        private ICarRepository _car;
+        private IEmployeeFinanceRepository _employeeFinance;
+        private IEmployeeRepository _employee;
+        private IExpenseRepository _expense;
+        private IInvoiceRepository _invoice;
+        private IOrderRepository _order;
+
         public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger, UserManager<User> userManager, IConfiguration configuration)
         {
             _context = context;
@@ -31,7 +39,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
                 return _user;
             }
         }
-        private IDepartmentRepository Department
+        public IDepartmentRepository Department
         {
             get
             {
@@ -42,7 +50,73 @@ namespace NKRY_API.Repositories.UnitOfWorks
                 return _department;
             }
         }
+        public IAdminExpenseRepository AdminExpense
+        {
+            get 
+            {
+                if(_adminExpense == null)
+                    _adminExpense = new AdminExpenseRepository(_context);
+                return _adminExpense;
+            }
+        }
+        public ICarRepository Car
+        {
+            get 
+            {
+                if(_car == null)
+                    _car = new CarRepository(_context);
+                return _car;
+            }
+        }
 
+        public IEmployeeFinanceRepository EmployeeFinance
+        {
+            get
+            {
+                if(_employeeFinance == null)
+                    _employeeFinance = new EmployeeFinanceRepository(_context);
+                return _employeeFinance;
+            }
+        }
+
+        public IEmployeeRepository Employee
+        {
+            get
+            {
+                if(_employee == null)
+                    _employee = new EmployeeRepository(_context);
+                return _employee;
+            }
+        }
+
+        public IExpenseRepository Expense
+        {
+            get
+            {
+                if(_expense == null)
+                    _expense = new ExpenseRepository(_context);
+                return _expense;
+            }
+        }
+        public IInvoiceRepository Invoice
+        {
+            get
+            {
+                if(_invoice == null)
+                    _invoice = new InvoiceRepository(_context);
+                return _invoice;
+            }
+        }
+
+        public IOrderRepository Order
+        {
+            get
+            {
+                if(_order == null)
+                    _order = new OrderRepository(_context);
+                return _order;
+            }
+        }
 
         public async Task<int> Complete()
         {
