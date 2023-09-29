@@ -14,9 +14,10 @@ namespace NKRY_API.Domain.Entities
         // can be changed by the admin only
         public int DeliveryRate { get; set; }
         [Required]
-        public int BaseSalary { get; set; }
-        public int? TotalSalary { get; set; }
-        public DateOnly? DueMonth { get; set; }
+        public float BaseSalary { get; set; }
+        public float? TotalSalary { get; set; }
+        public string? DueMonth { get; set; }
+        public DateTime? DueDate { get; set; }
         public Guid EmployeeId { get; set; }
         public ICollection<Expense>? EmployeeExpenses { get; set; }
         

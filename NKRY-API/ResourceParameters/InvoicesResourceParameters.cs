@@ -7,8 +7,8 @@ namespace NKRY_API.ResourceParameters
 {
     public class InvoicesResourceParameters : ResourceParameters
     {
-        public DateOnly Date { get; set; }
-        public DateOnly DateFrom { get; set; }
+        public DateTime Date { get; set; }
+        public DateTime DateFrom { get; set; }
 
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,15 +10,13 @@ namespace NKRY_API.Domain.Entities
 {
     public class Invoice
     {
-        [Key]
         public Guid Id { get; set; }
-        [Key]
         [Required]
         public string? InvoiceNumber { get; set; }
         [Required]
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
         [Required]
-        public DateOnly DueDate { get; set; }
+        public DateTime DueDate { get; set; }
         [Required]
         public decimal PriceWithVAT { get; set; }
         [Required]
