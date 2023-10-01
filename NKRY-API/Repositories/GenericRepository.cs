@@ -11,7 +11,7 @@ namespace NKRY_API.Repositories
         {
             _applicationContext = applicationContext;
         }
-        public T? GetById(string id)
+        public T? GetById(Guid id)
         {
             return _applicationContext.Set<T>()
                                       .Find(id);

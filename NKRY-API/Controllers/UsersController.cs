@@ -62,7 +62,7 @@ namespace NKRY_API.Controllers
         // GET: api/Users/5
         [HttpGet("{id}")]
         [ActionName("GetUser")]
-        public async Task<ActionResult<UserDto>> GetUser(string id)
+        public async Task<ActionResult<UserDto>> GetUser(Guid id)
         {
           if (_user == null)
           {
@@ -113,7 +113,7 @@ namespace NKRY_API.Controllers
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(Guid id)
         {
             if (_user == null)
             {

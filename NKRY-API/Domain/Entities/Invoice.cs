@@ -22,7 +22,7 @@ namespace NKRY_API.Domain.Entities
         [Required]
         public string? BillTo { get; set; }
         public int VATRate = 15;
-        public string? VATRegistrationNumber { get; set; }
+        public string? VATRegistrationNumber { get; set; } = "310273137700003";
         public string? CommercialRegistrationNo { get; set; }
         public string? QRUrl { get; set; }
         public Guid? OrderId { get; set; }
