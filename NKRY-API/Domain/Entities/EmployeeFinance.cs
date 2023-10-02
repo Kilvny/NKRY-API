@@ -12,12 +12,12 @@ namespace NKRY_API.Domain.Entities
         [Required]
         public int DeliveriesMade { get; set; }
         // can be changed by the admin only
-        public int DeliveryRate { get; set; }
+        public decimal DeliveryRate { get; set; }
         [Required]
         public decimal BaseSalary { get; set; }
         public decimal? TotalSalary { get; set; }
-        public string? DueMonth { get; set; }
-        public DateTime? DueDate { get; set; }
+        public int? DueMonth { get; set; }
+        public int? DueYear { get; set; }
         public Guid EmployeeId { get; set; }
         public ICollection<Expense>? EmployeeExpenses { get; set; }
         
