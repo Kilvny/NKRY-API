@@ -15,13 +15,13 @@ namespace NKRY_API.Repositories
         {
 
         }
-        public EmployeeFinance GetEmployeeFinance(Employee employee, int year, int month)
+        public EmployeeFinance GetEmployeeFinance(Guid employeeId, int year, int month)
         {
 
             var employeeFinances = _applicationContext.employeeFinances as IQueryable<EmployeeFinance>;
             // var employeeFinances = employee.EmployeeFinance as IQueryable<EmployeeFinance>;
             EmployeeFinance filteredEmployeeFinance = employeeFinances
-                                .Include(ef => ef.EmployeeId == employee.Id)
+                                .Include(ef => ef.EmployeeId == employeeId)
                                 .Where(ef => ef.DueYear == year && ef.DueMonth == month)
                                 .FirstOrDefault();
 
@@ -34,5 +34,17 @@ namespace NKRY_API.Repositories
                                 .FirstOrDefault(e => e.Id == employeeId);
             return employee;
         }
+
+        public IEnumerable<Expense> GetEmployeeExpenses(Guid employeeId, int year, int month)
+        {
+            EmployeeFinance employeeFinance = GetEmployeeFinance(employeeId, year, month);
+            IEnumerable<Expense> employeeExpenses = employeeFinance.EmployeeExpenses;
+
+            return employeeExpenses;
+
+        }
+
+
+
     }
 }

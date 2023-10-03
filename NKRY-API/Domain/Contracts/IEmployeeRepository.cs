@@ -8,8 +8,11 @@ namespace NKRY_API.Domain.Contracts
 {
     public interface IEmployeeRepository : IGenericRepository<Employee>
     {
-        public EmployeeFinance GetEmployeeFinance(Employee employee, int year, int month);
+        public EmployeeFinance GetEmployeeFinance(Guid employeeId, int year, int month);
         public Employee GetEmployeeByFinance(Guid employeeId);
+        public IEnumerable<Expense> GetEmployeeExpenses(Guid employeeId, int year, int month);
+        //public IEnumerable<Expense> AddEmployeeExpense(Guid employeeId, int year, int month);
+
 
     }
 }

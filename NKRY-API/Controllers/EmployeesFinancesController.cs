@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
@@ -11,13 +12,14 @@ using NKRY_API.ResourceParameters;
 namespace NKRY_API.Controllers
 {
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/employees/{employeeId}/Finance")]
-    public class EmployeeFinancesController : ControllerBase
+    public class EmployeesFinancesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmployeeRepository _employees;
 
-        public EmployeeFinancesController(IUnitOfWork unitOfWork)
+        public EmployeesFinancesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _employees = unitOfWork.Employee;
@@ -42,7 +44,7 @@ namespace NKRY_API.Controllers
                 return NotFound(employeeId);
             }
 
-            var employeeFinance = _employees.GetEmployeeFinance(curEmployee, year, month);
+            var employeeFinance = _employees.GetEmployeeFinance(curEmployee.Id, year, month);
 
 
             return Ok(employeeFinance);
@@ -94,5 +96,53 @@ namespace NKRY_API.Controllers
             return NoContent();
         }
 
+        [HttpGet("Expenses")]
+        public ActionResult<IEnumerable<Expense>> GetEmployeeExpenses([FromRoute] Guid employeeId, [FromQuery] EmployeeFinanceResourceParams employeeFinanceResourceParams)
+        {
+            int year = (int)employeeFinanceResourceParams.Year;
+            int month = (int)employeeFinanceResourceParams.Month;
+
+            IEnumerable<Expense> result = _employees.GetEmployeeExpenses(employeeId, year, month);
+
+            return Ok(result);
+        }
+
+        [HttpPost("Expenses")]
+        public async Task<ActionResult<Expense>> CreateEmployeeExpense([FromRoute] Guid employeeId, [FromBody] Expense expense)
+        {
+            if (expense == null)
+            {
+                return BadRequest();
+            }
+
+            var employee = _employees.GetById(employeeId);
+            if (employee == null)
+            {
+                return NotFound("Employee with specified Id doesn't exist!");
+            }
+
+            int year = expense.DueDate.Year;
+            int month = expense.DueDate.Month;
+
+            EmployeeFinance employeeFinance = _employees.GetEmployeeFinance(employeeId, year, month);
+            IEnumerable<Expense> employeeExpenses = employeeFinance.EmployeeExpenses;
+
+            if (employeeExpenses == null)
+            {
+                employeeExpenses = new List<Expense>();
+            }
+            
+            employeeExpenses.Append(expense);
+
+            employeeFinance.EmployeeExpenses = employeeExpenses as ICollection<Expense>;
+
+            _unitOfWork.EmployeeFinance.Update(employeeFinance);
+
+            await _unitOfWork.Complete();
+
+            return CreatedAtAction("GetEmployeeExpenses", new { id = expense.Id }, expense);
+
+
+        }
     }
 }
