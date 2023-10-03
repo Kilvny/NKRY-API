@@ -8,6 +8,12 @@ namespace NKRY_API.Utilities
 {
     public static class QRCodeGenerator
     {
+        /// <summary>
+        /// Generate A QR Code 
+        /// </summary>
+        /// <param name="data">the data you want to get when you read the QR code</param>
+        /// <param name="dimensions">dimensions of the generated QR in pixels</param>
+        /// <returns>the imageURL for the QR code</returns>
         public async static Task<string> GenerateAsync(string data, int dimensions = 150) 
         {
             string qrURL = await QRApiService.GetQRUrl(data, dimensions); // var result = QRCodeGenerator.GenerateAsync(json).GetAwaiter().GetResult();

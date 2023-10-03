@@ -17,6 +17,7 @@ namespace NKRY_API.Domain.Entities
         public DateTime CreatedAt { get; set; }
         [Required]
         public decimal Price { get; set; }
+        public decimal PaidAmount { get; set; }
         public decimal? Cost { get; set; } = 0;
         public string? OrderStatus { get; set; }
 
