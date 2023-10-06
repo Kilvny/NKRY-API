@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using NKRY_API.DataAccess.EFCore;
+using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
 
 namespace NKRY_API.Controllers
@@ -14,33 +16,35 @@ namespace NKRY_API.Controllers
     [ApiController]
     public class InvoicesController : ControllerBase
     {
-        private readonly ApplicationContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IInvoiceRepository _invoice;
 
-        public InvoicesController(ApplicationContext context)
+        public InvoicesController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _invoice = _unitOfWork.Invoice;
         }
 
         // GET: api/Invoices
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Invoice>>> Getinvoices()
         {
-          if (_context.invoices == null)
+          if (_invoice == null)
           {
               return NotFound();
           }
-            return await _context.invoices.ToListAsync();
+            return Ok(_invoice.GetAll());
         }
 
         // GET: api/Invoices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Invoice>> GetInvoice(Guid id)
         {
-          if (_context.invoices == null)
+          if (_invoice == null)
           {
               return NotFound();
           }
-            var invoice = await _context.invoices.FindAsync(id);
+            var invoice = _invoice.GetById(id);
 
             if (invoice == null)
             {
@@ -60,11 +64,11 @@ namespace NKRY_API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(invoice).State = EntityState.Modified;
+            _invoice.Update(invoice);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Complete();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -86,39 +90,58 @@ namespace NKRY_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Invoice>> PostInvoice(Invoice invoice)
         {
-          if (_context.invoices == null)
+          if (_invoice == null)
           {
               return Problem("Entity set 'ApplicationContext.invoices'  is null.");
           }
-            _context.invoices.Add(invoice);
-            await _context.SaveChangesAsync();
+            if (invoice.Order != null)
+            {
+                var order = new Order()
+                {
+                    Items = invoice.Order.Items,
+                    Quantity = invoice.Order.Quantity,
+                    Description = invoice.Order.Description,
+                    CreatedAt = DateTime.UtcNow.AddHours(3),
+                    Price = invoice.Order.Price,
+                    PaidAmount = invoice.Order.PaidAmount,
+                    OrderStatus = "new"
+                };
+
+                _unitOfWork.Order.Create(order);
+                invoice.OrderId = order.Id;
+
+            }
+
+            _invoice.Create(invoice);
+            await _unitOfWork.Complete();
+
 
             return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoice);
         }
 
-        // DELETE: api/Invoices/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInvoice(Guid id)
-        {
-            if (_context.invoices == null)
-            {
-                return NotFound();
-            }
-            var invoice = await _context.invoices.FindAsync(id);
-            if (invoice == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Invoices/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteInvoice(Guid id)
+        //{
+        //    if (_context.invoices == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var invoice = await _context.invoices.FindAsync(id);
+        //    if (invoice == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.invoices.Remove(invoice);
-            await _context.SaveChangesAsync();
+        //    _context.invoices.Remove(invoice);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool InvoiceExists(Guid id)
         {
-            return (_context.invoices?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_invoice.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
