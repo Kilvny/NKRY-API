@@ -13,13 +13,24 @@ namespace NKRY_API.Repositories
     {
         public InvoiceRepository(ApplicationContext applicationContext) : base(applicationContext)
         {
-            
+
         }
 
         public IEnumerable<Invoice> GetAll(InvoicesResourceParameters invoicesResourceParameters)
         {
             var notImplementedYet = new List<Invoice>();
             return notImplementedYet;
+        }
+
+        public int GetInvoiceCount()
+        {
+            int count = GetAll().Count();
+
+            if (count < 1 || count == null)
+            {
+                return 0;
+            }
+            return count;
         }
     }
 }

@@ -10,5 +10,7 @@ namespace NKRY_API.Domain.Contracts
     public interface IInvoiceRepository : IGenericRepository<Invoice>
     {
         public IEnumerable<Invoice> GetAll(InvoicesResourceParameters invoicesResourceParameters);
+        public int GetInvoiceCount();
+
     }
 }

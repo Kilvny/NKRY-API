@@ -12,9 +12,17 @@ namespace NKRY_API.Helpers
             return invoiceNumber;
         }
 
-        public static int GetInvoiceCount(ApplicationContext applicationContext)
+    }
+
+
+    public static  class TaxInvoiceUrlGenerator
+    {
+        public static string Generate(string clientUrl, string invoiceNumber)
         {
-            return applicationContext.invoices.Count();
+
+            string url = ($"{clientUrl}/nkry-ca/customer-service/invoices/{invoiceNumber}");
+
+            return url;
         }
     }
 }

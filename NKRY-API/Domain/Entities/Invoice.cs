@@ -11,13 +11,9 @@ namespace NKRY_API.Domain.Entities
     public class Invoice
     {
         public Guid Id { get; set; }
-        [Required]
         public string? InvoiceNumber { get; set; }
-        [Required]
-        public DateTime Date { get; set; }
-        [Required]
-        public DateTime DueDate { get; set; }
-        [Required]
+        public DateTime? Date { get; set; }
+        public DateTime? DueDate { get; set; }
         public decimal PriceWithVAT { get; set; }
         [Required]
         public string? BillTo { get; set; }

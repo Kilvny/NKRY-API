@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,20 +10,25 @@ using Microsoft.Extensions.Hosting;
 using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
+using NKRY_API.Helpers;
+using NKRY_API.Utilities;
 
 namespace NKRY_API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class InvoicesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IInvoiceRepository _invoice;
+        private readonly IConfiguration _configuration;
 
-        public InvoicesController(IUnitOfWork unitOfWork)
+        public InvoicesController(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _invoice = _unitOfWork.Invoice;
+            _configuration = configuration;
         }
 
         // GET: api/Invoices
@@ -94,6 +100,8 @@ namespace NKRY_API.Controllers
           {
               return Problem("Entity set 'ApplicationContext.invoices'  is null.");
           }
+            int existingInvoiceCount = _invoice.GetInvoiceCount();
+            invoice.InvoiceNumber = InvoiceNumberGenerator.Generate(existingInvoiceCount);
             if (invoice.Order != null)
             {
                 var order = new Order()
@@ -109,8 +117,15 @@ namespace NKRY_API.Controllers
 
                 _unitOfWork.Order.Create(order);
                 invoice.OrderId = order.Id;
+                invoice.PriceWithVAT = PriceWithVATCalculator.Calculate(order.Price, invoice.VATRate);
 
             }
+
+            invoice.Date = DateTime.UtcNow.AddHours(3);
+            invoice.DueDate = DateTime.UtcNow.AddHours(3);
+
+            string taxInvoiceUrl = TaxInvoiceUrlGenerator.Generate(_configuration["ClientUrl"], invoice.InvoiceNumber);
+            invoice.QRUrl = await QRCodeGenerator.GenerateAsync(taxInvoiceUrl);
 
             _invoice.Create(invoice);
             await _unitOfWork.Complete();
@@ -119,25 +134,33 @@ namespace NKRY_API.Controllers
             return CreatedAtAction("GetInvoice", new { id = invoice.Id }, invoice);
         }
 
-        //// DELETE: api/Invoices/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteInvoice(Guid id)
-        //{
-        //    if (_context.invoices == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var invoice = await _context.invoices.FindAsync(id);
-        //    if (invoice == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // DELETE: api/Invoices/5
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteInvoice(Guid id)
+        {
+            if (_invoice == null)
+            {
+                return NotFound();
+            }
+            var invoice = _invoice.GetById(id);
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+            var orderIdOfTheInvoice = invoice.OrderId;
+            var orderOfTheInvoice = _unitOfWork.Order.GetById(orderIdOfTheInvoice?? new Guid());
 
-        //    _context.invoices.Remove(invoice);
-        //    await _context.SaveChangesAsync();
+            if (orderOfTheInvoice != null)
+            {
+                _unitOfWork.Order.Delete(orderOfTheInvoice);
+            }
 
-        //    return NoContent();
-        //}
+            _invoice.Delete(invoice);
+            await _unitOfWork.Complete();
+
+            return NoContent();
+        }
 
         private bool InvoiceExists(Guid id)
         {
