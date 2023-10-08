@@ -70,7 +70,7 @@ namespace NKRY_API.Repositories
             {
                 searchQuery = searchQuery.Trim();
                 var searchResult = users.Where(u => u.Address.Contains(searchQuery)
-                || u.Email.Contains(searchQuery));
+                || u.Email.Contains(searchQuery) || u.UserName.Contains(searchQuery));
                 users = searchResult;
             }
             // now we execute after the filtration done on the query first
