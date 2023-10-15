@@ -19,7 +19,7 @@ namespace NKRY_API.Models
         [MaxLength(100)]
         [MinLength(8, ErrorMessage ="Password must be at least 8 chars long")]
         public string? Password { get; set; }
-        [Required(ErrorMessage = "Department Id Is Required")]
+        //[Required(ErrorMessage = "Department Id Is Required")]
         public int? DepartmentId { get; set; }
     }
 }
