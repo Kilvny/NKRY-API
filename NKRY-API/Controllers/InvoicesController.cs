@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,14 @@ namespace NKRY_API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IInvoiceRepository _invoice;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public InvoicesController(IUnitOfWork unitOfWork, IConfiguration configuration)
+        public InvoicesController(IUnitOfWork unitOfWork, IConfiguration configuration, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _invoice = _unitOfWork.Invoice;
             _configuration = configuration;
+            _mapper = mapper;
         }
 
         // GET: api/Invoices
@@ -57,7 +60,22 @@ namespace NKRY_API.Controllers
                 return NotFound();
             }
 
-            return invoice;
+            var invoiceWithOrder = new Invoice
+            {
+                Id = invoice.Id,
+                InvoiceNumber = invoice.InvoiceNumber,
+                Date = invoice.Date,
+                DueDate = invoice.DueDate,
+                PriceWithVAT = invoice.PriceWithVAT,
+                BillTo = invoice.BillTo,
+                VATRegistrationNumber = invoice.VATRegistrationNumber,
+                CommercialRegistrationNo = invoice.CommercialRegistrationNo,
+                QRUrl = invoice.QRUrl,
+                OrderId = invoice.OrderId,
+                Order = _unitOfWork.Order.GetById((Guid)invoice.OrderId),
+            };
+
+            return invoiceWithOrder;
         }
 
         // PUT: api/Invoices/5

@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Entities;
 using NKRY_API.Services;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,7 +45,57 @@ builder.Services.ConfigureUnitOfWork();
 
 builder.Services.ConfigureAutoMapper();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(
+    c =>
+    {
+        // configurations to add the authorize lock symbol on Swagger UI
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "NKRY API", Version = "v1" });
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = @"JWT Authorization header using the Bearer scheme. <BR/>  
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      <BR/> Example: 'Bearer 12345abcdef'",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+      {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+              {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+              },
+              Scheme = "oauth2",
+              Name = "Bearer",
+              In = ParameterLocation.Header,
+
+            },
+            new List<string>()
+          }
+        });
+        //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        //c.IncludeXmlComments(xmlPath);
+    }
+    );
+
+// Add Cors services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:3000") // Allow requests from your frontend application
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -79,6 +131,8 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "NKRY API V1");
     c.RoutePrefix = string.Empty; // swagger UI now is accessible in the root path of the app
 });
+
+app.UseCors("AllowSpecificOrigin");
 
 // set up our api to use attribute based routing
 app.UseEndpoints(endpoints =>

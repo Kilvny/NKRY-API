@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using NKRY_API.DataAccess.EFCore;
+using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
 using NKRY_API.Models;
 
@@ -6,6 +8,12 @@ namespace NKRY_API.Profiles
 {
     public class InvoicesProfile : Profile
     {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public InvoicesProfile(IUnitOfWork unitOfWork, ApplicationContext a)
+        {
+            _unitOfWork = unitOfWork;
+        }
         public InvoicesProfile()
         {
             CreateMap<Invoice, TaxInvoiceDto>()
@@ -25,6 +33,10 @@ namespace NKRY_API.Profiles
                 dest => dest.Price,
                 opt => opt.MapFrom(src => src.Order.Price));
 
+            CreateMap<Invoice, Invoice>()
+                .ForMember(
+               dest => dest.Order,
+               opt => opt.MapFrom(src => _unitOfWork.Order.GetById((Guid)src.OrderId) ));
                 
         }
     }

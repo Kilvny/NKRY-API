@@ -23,6 +23,8 @@ namespace NKRY_API.Profiles
                 .ForMember(
                 dest => dest.UserName,
                 opt => opt.MapFrom(src => src.Email));
+
+
         }
     }
 }
