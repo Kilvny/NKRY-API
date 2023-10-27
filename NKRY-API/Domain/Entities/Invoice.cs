@@ -21,7 +21,8 @@ namespace NKRY_API.Domain.Entities
         public string? VATRegistrationNumber { get; set; } = "310273137700003";
         public string? CommercialRegistrationNo { get; set; }
         public string? QRUrl { get; set; }
-        public Guid? OrderId { get; set; }
+        public string? CustomerPhoneNumber { get; set; }
+        public Guid? OrderId { get; set; }  
         public Order? Order { get; set; }
 
          

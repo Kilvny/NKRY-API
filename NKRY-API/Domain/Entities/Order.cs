@@ -1,3 +1,4 @@
+using NKRY_API.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +21,10 @@ namespace NKRY_API.Domain.Entities
         public decimal PaidAmount { get; set; }
         public decimal? Cost { get; set; } = 0;
         public string? OrderStatus { get; set; }
+        public string? Color { get; set; }
+        public string? CustomColor { get; set; }
+        public Size? Size { get; set; }
+        public int? SizeId { get; set; }
 
 
     }
