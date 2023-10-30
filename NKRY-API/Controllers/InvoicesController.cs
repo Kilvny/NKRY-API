@@ -12,6 +12,7 @@ using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
 using NKRY_API.Helpers;
+using NKRY_API.ResourceParameters;
 using NKRY_API.Utilities;
 
 namespace NKRY_API.Controllers
@@ -36,17 +37,17 @@ namespace NKRY_API.Controllers
 
         // GET: api/Invoices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Invoice>>> Getinvoices()
+        public async Task<ActionResult<IEnumerable<Invoice>>> Getinvoices([FromQuery] InvoicesResourceParameters invoicesResourceParameters)
         {
           if (_invoice == null)
           {
               return NotFound();
           }
-            return Ok(_invoice.GetAll());
+            return Ok(_invoice.GetAll(invoicesResourceParameters));
         }
 
         // GET: api/Invoices/5
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<ActionResult<Invoice>> GetInvoice(Guid id)
         {
           if (_invoice == null)
@@ -78,6 +79,24 @@ namespace NKRY_API.Controllers
             return invoiceWithOrder;
         }
 
+        // GET: api/Invoices/Inv-0001
+        [HttpGet("{invoiceNumber}")]
+        public async Task<ActionResult<Invoice>> GetInvoice(string invoiceNumber)
+        {
+            if (_invoice == null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(invoiceNumber))
+            {
+                return BadRequest("Invoice Number must be passed");
+            }
+
+            Invoice invoice = _invoice.GetByInvoiceNumber(invoiceNumber);
+            if (invoice == null) { return NotFound(); }
+            return Ok(invoice);
+        }
         // PUT: api/Invoices/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

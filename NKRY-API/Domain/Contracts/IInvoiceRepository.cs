@@ -11,6 +11,7 @@ namespace NKRY_API.Domain.Contracts
     {
         public IEnumerable<Invoice> GetAll(InvoicesResourceParameters invoicesResourceParameters);
         public int GetInvoiceCount();
+        public Invoice GetByInvoiceNumber(string invoiceNumber);
 
     }
 }

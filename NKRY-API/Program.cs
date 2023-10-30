@@ -88,13 +88,21 @@ builder.Services.AddSwaggerGen(
 // Add Cors services
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", builder =>
+    options.AddDefaultPolicy(builder =>
     {
-        builder
-            .WithOrigins("http://localhost:3000") // Allow requests from your frontend application
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
     });
+
+    //options.AddPolicy("AllowSpecificOrigin", builder =>
+    //{
+    //    builder
+    //        //.WithOrigins("http://localhost:3000") // Allow requests from your frontend application
+    //        .AllowAnyOrigin()
+    //        .AllowAnyHeader()
+    //        .AllowAnyMethod();
+    //});
 });
 
 var app = builder.Build();
@@ -132,7 +140,7 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty; // swagger UI now is accessible in the root path of the app
 });
 
-app.UseCors("AllowSpecificOrigin");
+app.UseCors();
 
 // set up our api to use attribute based routing
 app.UseEndpoints(endpoints =>
