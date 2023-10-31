@@ -18,7 +18,7 @@ namespace NKRY_API.Domain.Entities
         public decimal? TotalSalary { get; set; }
         public int? DueMonth { get; set; }
         public int? DueYear { get; set; }
-        public Guid EmployeeId { get; set; }
+        public Guid? EmployeeId { get; set; }
         public ICollection<Expense>? EmployeeExpenses { get; set; }
         
     }

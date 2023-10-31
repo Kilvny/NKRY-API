@@ -109,6 +109,11 @@ namespace NKRY_API.Controllers
                     Address = employee.Address,
                     PhoneNumber = employee.PhoneNumber,
                     Photo = employee.Photo,
+                    Job = employee.Job,
+                    Nationality = employee.Nationality,
+                    EmployeeIdNumber = employee.EmployeeIdNumber,
+                    PassportNumber = employee.PassportNumber,
+
 
                 };
 
@@ -118,6 +123,7 @@ namespace NKRY_API.Controllers
                     Model = employee.Car.Model,
                     ManfactureYear = employee.Car.ManfactureYear,
                     PlateNumber = employee.Car.PlateNumber
+                    
                 };
 
                 _car.Create(car);

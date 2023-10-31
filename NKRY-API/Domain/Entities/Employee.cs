@@ -16,7 +16,7 @@ namespace NKRY_API.Domain.Entities
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Photo { get; set; }
-        public string EmployeeId { get; set; }
+        public string? EmployeeIdNumber { get; set; }
         public string? PassportNumber { get; set; }
         public ICollection<EmployeeFinance>? EmployeeFinance { get; set; }
         public Guid? CarId { get; set; }
