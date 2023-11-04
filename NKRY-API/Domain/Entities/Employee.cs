@@ -18,8 +18,13 @@ namespace NKRY_API.Domain.Entities
         public string? Photo { get; set; }
         public string? EmployeeIdNumber { get; set; }
         public string? PassportNumber { get; set; }
-        public ICollection<EmployeeFinance>? EmployeeFinance { get; set; }
+        public ICollection<EmployeeFinance>? MonthlyFinance { get; set; }
         public Guid? CarId { get; set; }
         public Car? Car { get; set; }
+        public PersonalDetails? PersonalDetails { get; set; }
+        public FixedFinance? FixedFinance { get; set; }
+        public ICollection<Expense>? FixedExpnenses { get; set; }
+
+
     }
 }

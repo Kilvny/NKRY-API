@@ -28,7 +28,9 @@ namespace NKRY_API.Controllers
 
         // POST: api/auth/register
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [AllowAnonymous]
+
+        // TODO: update this to be resitrected for admins after seeding
+        [AllowAnonymous] 
         [HttpPost("Register")]
         public async Task<ActionResult<User>> PostUser(CreateUserDto userDto)
         {

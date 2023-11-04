@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NKRY_API.DataAccess.EFCore;
 
@@ -11,9 +12,11 @@ using NKRY_API.DataAccess.EFCore;
 namespace NKRY_API.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20231101075703_employeeupdatesmigration3")]
+    partial class employeeupdatesmigration3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -319,8 +322,14 @@ namespace NKRY_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("DeliveriesMade")
+                    b.Property<decimal>("BaseSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("DeliveriesMade")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("DeliveryRate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("DueMonth")
                         .HasColumnType("int");
@@ -328,7 +337,7 @@ namespace NKRY_API.Migrations
                     b.Property<int?>("DueYear")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid?>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal?>("TotalSalary")
@@ -360,47 +369,22 @@ namespace NKRY_API.Migrations
                     b.Property<Guid?>("EmployeeFinanceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeFinanceId");
 
-                    b.HasIndex("EmployeeId");
-
                     b.ToTable("expenses");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Expense");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("NKRY_API.Domain.Entities.FixedFinance", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal?>("BaseSalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("DeliveryRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique();
-
-                    b.ToTable("finances");
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.Invoice", b =>
@@ -492,37 +476,6 @@ namespace NKRY_API.Migrations
                     b.HasIndex("SizeId");
 
                     b.ToTable("orders");
-                });
-
-            modelBuilder.Entity("NKRY_API.Domain.Entities.PersonalDetails", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DuesPayDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("FlightTicketsDueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("VisaExpiryDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId")
-                        .IsUnique();
-
-                    b.ToTable("PersonalDetails");
                 });
 
             modelBuilder.Entity("NKRY_API.Models.Size", b =>
@@ -659,30 +612,15 @@ namespace NKRY_API.Migrations
             modelBuilder.Entity("NKRY_API.Domain.Entities.EmployeeFinance", b =>
                 {
                     b.HasOne("NKRY_API.Domain.Entities.Employee", null)
-                        .WithMany("MonthlyFinance")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("EmployeeFinance")
+                        .HasForeignKey("EmployeeId");
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.Expense", b =>
                 {
                     b.HasOne("NKRY_API.Domain.Entities.EmployeeFinance", null)
-                        .WithMany("MonthlyExpnenses")
+                        .WithMany("EmployeeExpenses")
                         .HasForeignKey("EmployeeFinanceId");
-
-                    b.HasOne("NKRY_API.Domain.Entities.Employee", null)
-                        .WithMany("FixedExpnenses")
-                        .HasForeignKey("EmployeeId");
-                });
-
-            modelBuilder.Entity("NKRY_API.Domain.Entities.FixedFinance", b =>
-                {
-                    b.HasOne("NKRY_API.Domain.Entities.Employee", null)
-                        .WithOne("FixedFinance")
-                        .HasForeignKey("NKRY_API.Domain.Entities.FixedFinance", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.Invoice", b =>
@@ -701,15 +639,6 @@ namespace NKRY_API.Migrations
                         .HasForeignKey("SizeId");
 
                     b.Navigation("Size");
-                });
-
-            modelBuilder.Entity("NKRY_API.Domain.Entities.PersonalDetails", b =>
-                {
-                    b.HasOne("NKRY_API.Domain.Entities.Employee", null)
-                        .WithOne("PersonalDetails")
-                        .HasForeignKey("NKRY_API.Domain.Entities.PersonalDetails", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.User", b =>
@@ -742,18 +671,12 @@ namespace NKRY_API.Migrations
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.Employee", b =>
                 {
-                    b.Navigation("FixedExpnenses");
-
-                    b.Navigation("FixedFinance");
-
-                    b.Navigation("MonthlyFinance");
-
-                    b.Navigation("PersonalDetails");
+                    b.Navigation("EmployeeFinance");
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.EmployeeFinance", b =>
                 {
-                    b.Navigation("MonthlyExpnenses");
+                    b.Navigation("EmployeeExpenses");
                 });
 
             modelBuilder.Entity("NKRY_API.Domain.Entities.User", b =>

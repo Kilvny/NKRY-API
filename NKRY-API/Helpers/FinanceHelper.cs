@@ -9,6 +9,8 @@ namespace NKRY_API.Helpers
     {
         public static decimal CalculateTotalSalary(int deliveriesMade,decimal deliveryRate, decimal baseSalary)
         {
+            if (deliveriesMade == null && deliveryRate == null && baseSalary == null)
+                return 0;
             return (deliveriesMade * deliveryRate) + baseSalary;
         }
     }

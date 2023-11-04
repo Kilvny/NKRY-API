@@ -7,15 +7,18 @@ namespace NKRY_API.ResourceParameters
 {
     public class EmployeeFinanceResourceParams
     {
+        private int? _year;
+        private int? _month;
+
         public int? Year
         {
-            get => Year ?? DateTime.Now.Year;
-            set => Year = value;
+            get => _year ?? DateTime.Now.Year;
+            set => _year = value;
         }
         public int? Month 
         {
-            get => Month ?? DateTime.Now.Month;
-            set => Month = value;
+            get => _month ?? DateTime.Now.Month;
+            set => _month = value;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace NKRY_API.Domain.Contracts
+﻿using NKRY_API.Domain.Entities;
+
+namespace NKRY_API.Domain.Contracts
 {
     /// <summary>
     /// The Unit of Work pattern is a design pattern used in software engineering
@@ -16,6 +18,7 @@
         IExpenseRepository Expense {get;}
         IInvoiceRepository Invoice { get; }
         IOrderRepository Order { get; }
+        IGenericRepository<FixedFinance> Finance { get;}
 
         // add more 
         Task<int> Complete();

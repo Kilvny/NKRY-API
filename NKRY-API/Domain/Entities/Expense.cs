@@ -16,6 +16,5 @@ namespace NKRY_API.Domain.Entities
         public DateTime DueDate { get; set; }
         [Required]
         public decimal Amount { get; set; }
-        public string? PaymentType { get; set; }
     }
 }
