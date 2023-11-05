@@ -155,6 +155,7 @@ namespace NKRY_API.Controllers
                 employeeExpenses = new List<Expense>();
             }
             var x = (employeeExpenses.GetType());
+            // TODO: This logic starting from under here, needs fucking revision, a lot of things are not right about it
             // Check if an expense with the same name already exists for the employee
             var existingExpense = employeeExpenses.FirstOrDefault(e => e.Name == expense.Name);
 
@@ -171,7 +172,7 @@ namespace NKRY_API.Controllers
                 employeeExpenses.ToList().Add(expense); 
             }
 
-            employeeFinance.MonthlyExpnenses = employeeExpenses as ICollection<Expense>;
+            employeeFinance.MonthlyExpnenses.Add(expense);
 
             _unitOfWork.EmployeeFinance.Update(employeeFinance);
 
