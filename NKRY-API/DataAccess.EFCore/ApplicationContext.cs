@@ -24,5 +24,6 @@ namespace NKRY_API.DataAccess.EFCore
         public DbSet<Invoice> invoices { get; set; }
         public DbSet<Order> orders { get; set; }
         public DbSet<FixedFinance> finances { get; set; }
+        public DbSet<ExpenseNames> expenseNames { get; set; }
     }
 }

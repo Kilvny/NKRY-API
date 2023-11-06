@@ -13,8 +13,10 @@ namespace NKRY_API.Domain.Entities
         [Required]
         public string? Name { get; set; }
         [Required]
-        public DateTime DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
         [Required]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
+        public Guid? EmployeeFinanceId { get; set; }
+        public EmployeeFinance? EmployeeFinance { get; set; }
     }
 }

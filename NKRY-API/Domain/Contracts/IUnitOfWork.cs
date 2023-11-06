@@ -19,6 +19,7 @@ namespace NKRY_API.Domain.Contracts
         IInvoiceRepository Invoice { get; }
         IOrderRepository Order { get; }
         IGenericRepository<FixedFinance> Finance { get;}
+        IGenericRepository<ExpenseNames> ExpenseNames { get; }
 
         // add more 
         Task<int> Complete();

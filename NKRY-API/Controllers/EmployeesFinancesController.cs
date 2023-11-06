@@ -144,8 +144,8 @@ namespace NKRY_API.Controllers
                 return NotFound("Employee with specified Id doesn't exist!");
             }
 
-            int year = expense.DueDate.Year;
-            int month = expense.DueDate.Month;
+            int year = (int)expense.DueDate?.Year;
+            int month = (int)expense.DueDate?.Month;
 
             EmployeeFinance employeeFinance = _employees.GetEmployeeFinanceByYearAndMonth(employeeId, year, month);
             IEnumerable<Expense> employeeExpenses = employeeFinance.MonthlyExpnenses;

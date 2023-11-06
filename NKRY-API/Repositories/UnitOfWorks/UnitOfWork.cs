@@ -21,6 +21,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
         private IInvoiceRepository _invoice;
         private IOrderRepository _order;
         private IGenericRepository<FixedFinance> _finance;
+        private IGenericRepository<ExpenseNames> _expenseNames;
 
         public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger, UserManager<User> userManager, IConfiguration configuration)
         {
@@ -127,6 +128,18 @@ namespace NKRY_API.Repositories.UnitOfWorks
                     _finance = new FinanceRepository(_context);
                 }
                 return _finance;
+            }
+        }
+
+        public IGenericRepository<ExpenseNames> ExpenseNames
+        {
+            get
+            {
+                if (_expenseNames == null)
+                {
+                    _expenseNames = new ExpenseNamesRepository(_context);
+                }
+                return _expenseNames;
             }
         }
 
