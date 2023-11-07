@@ -184,7 +184,7 @@ namespace NKRY_API.Controllers
         }
 
         [HttpPost("FixedFinance")]
-        public async Task<ActionResult<Expense>> CreateEmployeeFinance([FromRoute] Guid employeeId, FixedFinance ff)
+        public async Task<ActionResult<Expense>> EditEmployeeFixedFinance([FromRoute] Guid employeeId, FixedFinance ff)
         {
             if (ff == null) return BadRequest();
 
