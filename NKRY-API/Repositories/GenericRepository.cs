@@ -1,4 +1,5 @@
-﻿using NKRY_API.DataAccess.EFCore;
+﻿using Microsoft.EntityFrameworkCore;
+using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using System.Linq.Expressions;
 
@@ -11,6 +12,7 @@ namespace NKRY_API.Repositories
         {
             _applicationContext = applicationContext;
         }
+        public IQueryable<T> QueryableNoTracking => _applicationContext.Set<T>().AsNoTracking<T>();
         public T? GetById(Guid id) // TODO: change this id type to string
         {
             return _applicationContext.Set<T>()

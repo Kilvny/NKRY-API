@@ -62,7 +62,7 @@ namespace NKRY_API.Controllers
 
             var curEmployee = _employees.GetEmployeeWithAllFinances(employeeId);
 
-            if (curEmployee == null) 
+            if (curEmployee == null)
             {
                 return NotFound("This employee doesn't exist");
             }
@@ -70,9 +70,9 @@ namespace NKRY_API.Controllers
             EmployeeFinance curMonthFinance = curEmployee.MonthlyFinance.Where(f => f.DueYear == employeeFinance.DueYear && f.DueMonth == employeeFinance.DueMonth).FirstOrDefault();
 
 
-            if (curMonthFinance == null) 
+            if (curMonthFinance == null)
             {
-                EmployeeFinance ef = new() 
+                EmployeeFinance ef = new()
                 {
                     DeliveriesMade = employeeFinance.DeliveriesMade,
                     TotalSalary = employeeFinance.TotalSalary,
@@ -81,11 +81,11 @@ namespace NKRY_API.Controllers
                     EmployeeId = employeeId
                 };
 
-                
+
                 _unitOfWork.EmployeeFinance.Create(ef);
                 await _unitOfWork.Complete();
-                
-            } 
+
+            }
 
 
             int newDeliveriesMade = (int)employeeFinance.DeliveriesMade;
@@ -169,7 +169,7 @@ namespace NKRY_API.Controllers
             else
             {
                 // If no expense with the same name exists, add the new expense to the list
-                employeeExpenses.ToList().Add(expense); 
+                employeeExpenses.ToList().Add(expense);
             }
 
             employeeFinance.MonthlyExpnenses.Add(expense);
@@ -179,6 +179,42 @@ namespace NKRY_API.Controllers
             await _unitOfWork.Complete();
 
             return CreatedAtAction("GetEmployeeExpenses", new { id = expense.Id }, expense);
+
+
+        }
+
+        [HttpPost("FixedFinance")]
+        public async Task<ActionResult<Expense>> CreateEmployeeFinance([FromRoute] Guid employeeId, FixedFinance ff)
+        {
+            if (ff == null) return BadRequest();
+
+            var employee = _employees.GetById(employeeId);
+            if (employee == null)
+            {
+                return BadRequest("Employee with specified Id doesn't exist!");
+            }
+
+            FixedFinance employeeFixedFinance = _unitOfWork.Finance.QueryableNoTracking.Where(f => f.EmployeeId == employeeId).FirstOrDefault();
+
+            if (employeeFixedFinance == null)
+            {
+                FixedFinance fixedFinance = new()
+                {
+                    EmployeeId = employeeId,
+                    BaseSalary = ff.BaseSalary,
+                    DeliveryRate = ff.DeliveryRate
+                };
+                _unitOfWork.Finance.Create(fixedFinance);
+            }
+            else
+            {
+                employeeFixedFinance.BaseSalary = ff.BaseSalary;
+                employeeFixedFinance.DeliveryRate = ff.DeliveryRate;
+                _unitOfWork.Finance.Update(ff);
+            }
+
+            await _unitOfWork.Complete();
+            return Ok(ff);
 
 
         }

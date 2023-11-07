@@ -10,5 +10,7 @@ namespace NKRY_API.Domain.Contracts
         void Create(T entity);
         void Update(T entity);
         void Delete(T entity);
+        IQueryable<T> QueryableNoTracking { get; }
+
     }
 }
