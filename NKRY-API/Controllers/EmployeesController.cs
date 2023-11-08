@@ -43,13 +43,19 @@ namespace NKRY_API.Controllers
 
         // GET: api/Employees/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Employee>> GetEmployee(Guid id)
+        public async Task<ActionResult<Employee>> GetEmployee(string id)
         {
           if (_employee == null)
           {
               return NotFound();
           }
-            var employee = _employee.GetById(id);
+            Guid _id;
+            bool x = Guid.TryParse(id, out _id);
+            if (!x)
+            {
+                return BadRequest("Id is bad");
+            }
+            var employee = _employee.GetById(_id);
 
             if (employee == null)
             {

@@ -18,7 +18,7 @@ namespace NKRY_API.Repositories
         }
         public new IEnumerable<Employee> GetAll()
         {
-            var employee = _applicationContext
+            List<Employee> employee = _applicationContext
                 .employees
                 .Include(e => e.MonthlyFinance)
                 .ThenInclude(e => e.MonthlyExpnenses)
@@ -26,6 +26,21 @@ namespace NKRY_API.Repositories
                 .Include(e => e.PersonalDetails)
                 .Include(e => e.FixedFinance)
                 .Include(e => e.FixedExpnenses).ToList();
+            return employee;
+        }
+
+        public new Employee GetById(Guid id)
+        {
+            Employee employee = _applicationContext.employees
+                .Include(e => e.MonthlyFinance)
+                .ThenInclude(e => e.MonthlyExpnenses)
+                .Include(e => e.Car)
+                .Include(e => e.PersonalDetails)
+                .Include(e => e.FixedFinance)
+                .Include(e => e.FixedExpnenses)
+                .Where(e => e.Id == id)
+                .FirstOrDefault();
+
             return employee;
         }
         public EmployeeFinance GetEmployeeFinanceByYearAndMonth(Guid employeeId, int year, int month)

@@ -12,7 +12,8 @@ namespace NKRY_API.Domain.Contracts
         public Employee GetEmployeeWithAllFinances(Guid employeeId);
         public IEnumerable<Expense> GetEmployeeExpensesByYearAndMonth(Guid employeeId, int year, int month);
         public IEnumerable<EmployeeFinance> GetAllEmployeeVariableFinance(Guid employeeId);
-        
+        public new Employee GetById(Guid id);
+
         //public IEnumerable<Expense> AddEmployeeExpense(Guid employeeId, int year, int month);
 
 
