@@ -7,11 +7,11 @@ namespace NKRY_API.Helpers
 {
     public static class FinanceHelper
     {
-        public static decimal CalculateTotalSalary(int deliveriesMade,decimal deliveryRate, decimal baseSalary)
+        public static decimal CalculateTotalSalary(int deliveriesMade, decimal deliveryRate, decimal currSalary)
         {
-            if (deliveriesMade == null && deliveryRate == null && baseSalary == null)
+            if (deliveriesMade == null && deliveryRate == null && currSalary == null)
                 return 0;
-            return (deliveriesMade * deliveryRate) + baseSalary;
+            return (deliveriesMade * deliveryRate) + currSalary;
         }
     }
 }

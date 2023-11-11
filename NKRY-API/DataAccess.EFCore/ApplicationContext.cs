@@ -10,6 +10,8 @@ namespace NKRY_API.DataAccess.EFCore
         public ApplicationContext(DbContextOptions options) : base(options)
         {
         }
+        // TODO: seed the admin details + the fixed expense names maybe
+        // TODO: make sure how to configure your asp.net api to accept put and delete operations
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

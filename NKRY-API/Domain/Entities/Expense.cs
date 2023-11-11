@@ -17,8 +17,12 @@ namespace NKRY_API.Domain.Entities
         public DateTime? DueDate { get; set; }
         [Required]
         public decimal? Amount { get; set; }
+        public bool IsFixed { get; set; } = false;
         public Guid? EmployeeFinanceId { get; set; }
         [JsonIgnore]
         public EmployeeFinance? EmployeeFinance { get; set; }
+        public Guid? EmployeeId { get; set; }
+        [JsonIgnore]
+        public Employee? Employee { get; set; }
     }
 }

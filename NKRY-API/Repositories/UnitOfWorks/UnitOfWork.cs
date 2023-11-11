@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage;
 using NKRY_API.DataAccess.EFCore;
 using NKRY_API.Domain.Contracts;
 using NKRY_API.Domain.Entities;
@@ -143,6 +144,10 @@ namespace NKRY_API.Repositories.UnitOfWorks
             }
         }
 
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _context.Database.BeginTransaction();
+        }
         public async Task<int> Complete()
         {
             var saveResult = await _context.SaveChangesAsync();

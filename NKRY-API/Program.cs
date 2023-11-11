@@ -13,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
 options.UseSqlServer(builder.Configuration.GetConnectionString("NKRY-APIContext") ??
-throw new InvalidOperationException("Connections string: NKRY-APIContext was not found")));
+throw new InvalidOperationException("Connections string: NKRY-APIContext was not found"))
+,ServiceLifetime.Scoped);
 
 builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationContext>().AddDefaultTokenProviders();
 

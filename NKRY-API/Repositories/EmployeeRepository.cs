@@ -41,6 +41,9 @@ namespace NKRY_API.Repositories
                 .Where(e => e.Id == id)
                 .FirstOrDefault();
 
+            List<Expense> fixedExpenses = _applicationContext.expenses.Where(ex => ex.EmployeeId == id).Where(ex => ex.IsFixed == true).ToList();
+            employee.FixedExpnenses = fixedExpenses;
+
             return employee;
         }
         public EmployeeFinance GetEmployeeFinanceByYearAndMonth(Guid employeeId, int year, int month)

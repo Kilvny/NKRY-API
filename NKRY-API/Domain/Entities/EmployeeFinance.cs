@@ -9,9 +9,9 @@ namespace NKRY_API.Domain.Entities
     public class EmployeeFinance : Finance
     {
         public Guid Id { get; set; }
-        public int? DeliveriesMade { get; set; }
+        public int? DeliveriesMade { get; set; } = 0;
         // can be changed by the admin only
-        public decimal? TotalSalary { get; set; }
+        public decimal? TotalSalary { get; set; } = 0;
         public int? DueMonth { get; set; }
         public int? DueYear { get; set; }
         public ICollection <Expense>? MonthlyExpnenses{ get; set; }

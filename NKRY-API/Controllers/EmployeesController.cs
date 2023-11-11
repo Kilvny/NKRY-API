@@ -106,42 +106,69 @@ namespace NKRY_API.Controllers
               return Problem("Entity set 'ApplicationContext.employees'  is null.");
           }
 
-            if(employee.Car != null)
+            using(var transaction = _unitOfWork.BeginTransaction())
             {
-                var employeeWithCar = new Employee()
+                try
                 {
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    Address = employee.Address,
-                    PhoneNumber = employee.PhoneNumber,
-                    Photo = employee.Photo,
-                    Job = employee.Job,
-                    Nationality = employee.Nationality,
-                    EmployeeIdNumber = employee.EmployeeIdNumber,
-                    PassportNumber = employee.PassportNumber,
+                    FixedFinance ff = new();
 
+                    if (employee.Car != null)
+                    {
+                        var employeeWithCar = new Employee()
+                        {
+                            FirstName = employee.FirstName,
+                            LastName = employee.LastName,
+                            Address = employee.Address,
+                            PhoneNumber = employee.PhoneNumber,
+                            Photo = employee.Photo,
+                            Job = employee.Job,
+                            Nationality = employee.Nationality,
+                            EmployeeIdNumber = employee.EmployeeIdNumber,
+                            PassportNumber = employee.PassportNumber,
+                        };
 
-                };
+                        FixedFinance ffi = new()
+                        {
+                            EmployeeId = employeeWithCar.Id,
+                            BaseSalary = employee.FixedFinance.BaseSalary,
+                            DeliveryRate = employee.FixedFinance.DeliveryRate
+                        };
+                        employee.FixedFinance = ffi;
 
-                var car = new Car()
-                {
-                    Company = employee.Car.Company,
-                    Model = employee.Car.Model,
-                    ManfactureYear = employee.Car.ManfactureYear,
-                    PlateNumber = employee.Car.PlateNumber
+                        var car = new Car()
+                        {
+                            Company = employee.Car.Company,
+                            Model = employee.Car.Model,
+                            ManfactureYear = employee.Car.ManfactureYear,
+                            PlateNumber = employee.Car.PlateNumber
                     
-                };
+                        };
+                        _car.Create(car);
+                        employeeWithCar.CarId = car.Id;
 
-                _car.Create(car);
-                employeeWithCar.CarId = car.Id;
-                employee = employeeWithCar;
+                        employee = employeeWithCar;
+                        ff = ffi;
 
+                    }
+
+                    _employee.Create(employee);
+                    await _unitOfWork.Complete();
+                    ff.EmployeeId = employee.Id;
+                    _unitOfWork.Finance.Create(ff);
+                    await _unitOfWork.Complete();
+
+                    await transaction.CommitAsync(); // If everything is successful, commit the transaction
+
+                    return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
+
+                }
+                catch (Exception e)
+                {
+
+                    await transaction.RollbackAsync();
+                    return StatusCode(500, $"Error while creating an employee with the following exception: {e.InnerException?.Message}");
+                }
             }
-
-            _employee.Create(employee);
-            await _unitOfWork.Complete();
-
-            return CreatedAtAction("GetEmployee", new { id = employee.Id }, employee);
         }
 
         // DELETE: api/Employees/5

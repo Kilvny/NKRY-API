@@ -1,4 +1,5 @@
-﻿using NKRY_API.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using NKRY_API.Domain.Entities;
 
 namespace NKRY_API.Domain.Contracts
 {
@@ -21,6 +22,7 @@ namespace NKRY_API.Domain.Contracts
         IGenericRepository<FixedFinance> Finance { get;}
         IGenericRepository<ExpenseNames> ExpenseNames { get; }
 
+        public IDbContextTransaction BeginTransaction();
         // add more 
         Task<int> Complete();
 
