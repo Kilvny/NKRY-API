@@ -23,6 +23,7 @@ namespace NKRY_API.Repositories.UnitOfWorks
         private IOrderRepository _order;
         private IGenericRepository<FixedFinance> _finance;
         private IGenericRepository<ExpenseNames> _expenseNames;
+        private IGenericRepository<PersonalDetails> _personalDetails;
 
         public UnitOfWork(ApplicationContext context, ILogger<UnitOfWork> logger, UserManager<User> userManager, IConfiguration configuration)
         {
@@ -141,6 +142,17 @@ namespace NKRY_API.Repositories.UnitOfWorks
                     _expenseNames = new ExpenseNamesRepository(_context);
                 }
                 return _expenseNames;
+            }
+        } 
+        public IGenericRepository<PersonalDetails> PersonalDetails
+        {
+            get
+            {
+                if (_personalDetails == null)
+                {
+                    _personalDetails = new PersonalDetailsRepository(_context);
+                }
+                return _personalDetails;
             }
         }
 

@@ -22,12 +22,16 @@ namespace NKRY_API.Controllers
         private readonly IMapper _mapper;
         private readonly IEmployeeRepository _employee;
         private readonly ICarRepository _car;
+        private readonly IGenericRepository<PersonalDetails> _personalDetails;
+        private readonly ApplicationContext _db;
 
-        public EmployeesController(IUnitOfWork unitOfWork)
+        public EmployeesController(IUnitOfWork unitOfWork, ApplicationContext applicationContext)
         {
             _unitOfWork = unitOfWork;
             _employee = unitOfWork.Employee;
             _car = unitOfWork.Car;
+            _personalDetails = _unitOfWork.PersonalDetails;
+            _db = applicationContext;
         }
 
         // GET: api/Employees
@@ -193,9 +197,80 @@ namespace NKRY_API.Controllers
             return NoContent();
         }
 
+        // PUT: api/Employees/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}/PersonalDetails")]
+        public async Task<IActionResult> UpdatePersonalDetails(Guid id, PersonalDetails details)
+        {
+            if (_employee == null)
+            {
+                return Problem("Entity set 'ApplicationContext.employees'  is null.");
+            }
+
+            Employee employee = _employee.GetById(id);
+            if(employee == null)
+            {
+                return BadRequest("No Such Employee");
+            }
+            _db.Entry(employee).State = EntityState.Detached;
+            PersonalDetails employeePersonalDetails = 
+                _personalDetails
+                .QueryableNoTracking
+                .Where(p => p.EmployeeId == id)
+                .FirstOrDefault();
+
+            try
+            {
+                if (employeePersonalDetails != null)
+                {
+                    UpdatePersonalDetails(employeePersonalDetails, details);
+                }
+                else
+                {
+                    CreateNewPersonalDetails(employee.Id, details);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"an error while updating the personal detials of employee, {ex.Message}");
+            }
+
+            await _unitOfWork.Complete();
+            return NoContent();
+
+        }
+
         private bool EmployeeExists(Guid id)
         {
             return (_employee?.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private void UpdatePersonalDetails(PersonalDetails existingDetails, PersonalDetails newDetails)
+        {
+
+            // Update only non-null values
+            existingDetails.VisaExpiryDate = newDetails.VisaExpiryDate ?? existingDetails.VisaExpiryDate;
+            existingDetails.FlightTicketsDueDate = newDetails.FlightTicketsDueDate ?? existingDetails.FlightTicketsDueDate;
+            existingDetails.DateOfBirth = newDetails.DateOfBirth ?? existingDetails.DateOfBirth;
+            existingDetails.DuesPayDate = newDetails.DuesPayDate ?? existingDetails.DuesPayDate;
+            _db.personalDetails.Attach(existingDetails);
+
+            _personalDetails.Update(existingDetails);
+        }
+
+        private void CreateNewPersonalDetails(Guid employeeId, PersonalDetails details)
+        {
+            PersonalDetails personalDetails = new PersonalDetails
+            {
+                EmployeeId = employeeId,
+                VisaExpiryDate = details.VisaExpiryDate,
+                FlightTicketsDueDate = details.FlightTicketsDueDate,
+                DateOfBirth = details.DateOfBirth,
+                DuesPayDate = details.DuesPayDate,
+            };
+
+            _personalDetails.Create(personalDetails);
+            
         }
     }
 }

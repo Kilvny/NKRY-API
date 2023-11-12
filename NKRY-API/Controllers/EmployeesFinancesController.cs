@@ -72,7 +72,7 @@ namespace NKRY_API.Controllers
                 {
                     var curEmployee = _employees.QueryableNoTracking?.Where(e => e.Id == employeeId)?
                        .Include(e => e.MonthlyFinance)?
-                       .ThenInclude(e => e.MonthlyExpnenses)
+                       .ThenInclude(e => e.MonthlyExpenses)
                        .Include(e => e.FixedFinance)
                        .Include(e => e.FixedExpnenses)
                        .FirstOrDefault();
@@ -196,17 +196,17 @@ namespace NKRY_API.Controllers
                 {
                     DueMonth = month,
                     DueYear = year,
-                    MonthlyExpnenses = new List<Expense>(),
+                    MonthlyExpenses = new List<Expense>(),
                     EmployeeId = employeeId,
                 };
                 _unitOfWork.EmployeeFinance.Create(ef);
                 await _unitOfWork.Complete();
                 employeeFinance = ef;
-                employeeExpenses = ef.MonthlyExpnenses.ToList();
+                employeeExpenses = ef.MonthlyExpenses.ToList();
             } 
             else
             {
-                employeeExpenses = employeeFinance.MonthlyExpnenses;  
+                employeeExpenses = employeeFinance.MonthlyExpenses;  
             }
 
 
@@ -231,7 +231,7 @@ namespace NKRY_API.Controllers
                 employeeExpenses.ToList().Add(expense);
             }
 
-            employeeFinance.MonthlyExpnenses.Add(expense);
+            employeeFinance.MonthlyExpenses.Add(expense);
 
             _unitOfWork.EmployeeFinance.Update(employeeFinance);
             _unitOfWork.Expense.Create(expense);

@@ -21,6 +21,7 @@ namespace NKRY_API.Domain.Contracts
         IOrderRepository Order { get; }
         IGenericRepository<FixedFinance> Finance { get;}
         IGenericRepository<ExpenseNames> ExpenseNames { get; }
+        IGenericRepository<PersonalDetails> PersonalDetails { get; }
 
         public IDbContextTransaction BeginTransaction();
         // add more 

@@ -21,7 +21,7 @@ namespace NKRY_API.Repositories
             List<Employee> employee = _applicationContext
                 .employees
                 .Include(e => e.MonthlyFinance)
-                .ThenInclude(e => e.MonthlyExpnenses)
+                .ThenInclude(e => e.MonthlyExpenses)
                 .Include(e => e.Car)
                 .Include(e => e.PersonalDetails)
                 .Include(e => e.FixedFinance)
@@ -33,7 +33,7 @@ namespace NKRY_API.Repositories
         {
             Employee employee = _applicationContext.employees
                 .Include(e => e.MonthlyFinance)
-                .ThenInclude(e => e.MonthlyExpnenses)
+                .ThenInclude(e => e.MonthlyExpenses)
                 .Include(e => e.Car)
                 .Include(e => e.PersonalDetails)
                 .Include(e => e.FixedFinance)
@@ -52,7 +52,7 @@ namespace NKRY_API.Repositories
             var employeeFinances = _applicationContext.employeeFinances as IQueryable<EmployeeFinance>;
             // var employeeFinances = employee.EmployeeFinance as IQueryable<EmployeeFinance>;
             EmployeeFinance filteredEmployeeFinance = employeeFinances
-                    .Include(ef => ef.MonthlyExpnenses)
+                    .Include(ef => ef.MonthlyExpenses)
                     .Where(ef => ef.EmployeeId == employeeId)
                     .Where(ef => ef.DueYear == year && ef.DueMonth == month)
                     .FirstOrDefault();
@@ -65,7 +65,7 @@ namespace NKRY_API.Repositories
             var employee = _applicationContext
                 .employees.Where(e => e.Id == employeeId)
                 .Include(e => e.MonthlyFinance)
-                .ThenInclude(e=> e.MonthlyExpnenses)
+                .ThenInclude(e=> e.MonthlyExpenses)
                 .Include(e => e.FixedFinance)
                 .Include(e => e.FixedExpnenses)
                 .FirstOrDefault();
@@ -78,7 +78,7 @@ namespace NKRY_API.Repositories
             
             if (employeeFinance != null)
             {
-                IEnumerable<Expense> employeeExpenses = employeeFinance.MonthlyExpnenses;
+                IEnumerable<Expense> employeeExpenses = employeeFinance.MonthlyExpenses;
                 return employeeExpenses;    
             } 
 
@@ -92,7 +92,7 @@ namespace NKRY_API.Repositories
             // var employeeFinances = employee.EmployeeFinance as IQueryable<EmployeeFinance>;
             List<EmployeeFinance> employeeFinancesResult = employeeFinances
                     .Where(ef => ef.EmployeeId == employeeId)
-                    .Include(ef => ef.MonthlyExpnenses)
+                    .Include(ef => ef.MonthlyExpenses)
                     .ToList();
 
             return employeeFinancesResult;
