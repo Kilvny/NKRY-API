@@ -16,7 +16,6 @@ namespace NKRY_API.Domain.Entities
         [EmailAddress]
         [ProtectedPersonalData]
         public override string? Email { get; set; }
-        [Required(ErrorMessage = "User Password is required")]
         public string? Password { get; set; }
 
         [EnumDataType(typeof(UserRole),ErrorMessage ="User Role Must be: user or admin")]

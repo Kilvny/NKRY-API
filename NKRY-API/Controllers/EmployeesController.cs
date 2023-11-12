@@ -239,12 +239,12 @@ namespace NKRY_API.Controllers
             return NoContent();
 
         }
-
+        [NonAction]
         private bool EmployeeExists(Guid id)
         {
             return (_employee?.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-
+        [NonAction]
         private void UpdatePersonalDetails(PersonalDetails existingDetails, PersonalDetails newDetails)
         {
 
@@ -258,6 +258,7 @@ namespace NKRY_API.Controllers
             _personalDetails.Update(existingDetails);
         }
 
+        [NonAction]
         private void CreateNewPersonalDetails(Guid employeeId, PersonalDetails details)
         {
             PersonalDetails personalDetails = new PersonalDetails
