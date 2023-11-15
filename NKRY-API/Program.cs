@@ -96,14 +96,14 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader();
     });
 
-    //options.AddPolicy("AllowSpecificOrigin", builder =>
-    //{
-    //    builder
-    //        //.WithOrigins("http://localhost:3000") // Allow requests from your frontend application
-    //        .AllowAnyOrigin()
-    //        .AllowAnyHeader()
-    //        .AllowAnyMethod();
-    //});
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder
+            .WithOrigins("https://nkry-ca.vercel.app") // Allow requests from your frontend application
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
@@ -122,6 +122,13 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var db = services.GetRequiredService<ApplicationContext>();
+//    db.Database.Migrate();
+//}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

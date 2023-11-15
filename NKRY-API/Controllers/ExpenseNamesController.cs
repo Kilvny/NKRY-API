@@ -54,16 +54,24 @@ namespace NKRY_API.Controllers
             {
                 return BadRequest("Expense name is already there");
             }
-            ExpenseNames expenseNames = new ExpenseNames()
+
+            try
             {
-                Name = name,
-                Monthly = expense.Monthly
-            };
 
-            _unitOfWork.ExpenseNames.Create(expenseNames);
-            _unitOfWork.Complete();
-            return StatusCode(201);
+                ExpenseNames expenseNames = new ExpenseNames()
+                {
+                    Name = name,
+                    Monthly = expense.Monthly
+                };
+                _unitOfWork.ExpenseNames.Create(expenseNames);
+                _unitOfWork.Complete();
+                return StatusCode(201);
 
+            }
+            catch (Exception ee)
+            {
+                return StatusCode(500, $"Internal Server Error with this message {ee.Message}");
+            }
         }
     }
 }

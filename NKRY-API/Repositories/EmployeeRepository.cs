@@ -42,7 +42,8 @@ namespace NKRY_API.Repositories
                 .FirstOrDefault();
 
             List<Expense> fixedExpenses = _applicationContext.expenses.Where(ex => ex.EmployeeId == id).Where(ex => ex.IsFixed == true).ToList();
-            employee.FixedExpnenses = fixedExpenses;
+            if(fixedExpenses != null)
+                employee.FixedExpnenses = fixedExpenses;
 
             return employee;
         }
